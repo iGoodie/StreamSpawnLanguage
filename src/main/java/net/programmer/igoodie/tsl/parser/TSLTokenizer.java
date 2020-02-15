@@ -2,6 +2,9 @@ package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.token.TSLPlainToken;
+import net.programmer.igoodie.tsl.runtime.token.TSLTokenGroup;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +23,14 @@ public class TSLTokenizer {
 
     private String script;
     private List<String> rules;
+
+    private boolean escaping = false;
+    private boolean grouping = false;
+    private boolean expressing = false;
+
+    private StringBuilder accumulator = new StringBuilder();
+    private List<TSLToken> grouppedTokens = new LinkedList<>();
+    private List<TSLToken> tokens = new LinkedList<>();
 
     public TSLTokenizer(String script) {
         this.script = script;
@@ -151,6 +162,35 @@ public class TSLTokenizer {
 
     /* ------------------------------------------- */
 
+    private void accumulate(Object accumulation) {
+        accumulator.append(accumulation);
+    }
+
+    private void pushToken() {
+        if (accumulator.length() == 0)
+            return;
+
+        List<TSLToken> associatedBucket = grouping ? grouppedTokens : tokens;
+        String accumulation = accumulator.toString();
+
+        associatedBucket.add(expressing
+                ? new TSLExpression(accumulation)
+                : new TSLPlainToken(accumulation));
+
+        accumulator.setLength(0);
+    }
+
+    private void pushTokenGroup() {
+        if (grouppedTokens.size() == 0)
+            return;
+
+        tokens.add(new TSLTokenGroup(new LinkedList<>(grouppedTokens)));
+
+        grouppedTokens.clear();
+    }
+
+    /* ------------------------------------------- */
+
     public List<String> intoRules() throws TSLSyntaxError {
         this.rules = new LinkedList<>();
 
@@ -208,23 +248,24 @@ public class TSLTokenizer {
         return rules;
     }
 
-    public List<Object> intoTokens(int ruleIndex) throws TSLSyntaxError {
+    public List<TSLToken> intoTokens(int ruleIndex) throws TSLSyntaxError {
         assertRuleTokenization();
         return intoTokens(getRule(ruleIndex));
     }
 
-    private List<Object> intoTokens(String rule) throws TSLSyntaxError {
-        boolean escaping = false;
-        boolean grouping = false;
-        boolean expressing = false;
-
-        List<Object> tokens = new LinkedList<>();
-        StringBuilder tokenAccumulator = new StringBuilder();
-
+    private List<TSLToken> intoTokens(String rule) throws TSLSyntaxError {
         for (int i = 0; i < rule.length(); i++) {
             char character = rule.charAt(i);
 
             if (!expressing && lookahead(rule, i, EXPR_BEGIN)) {
+                if (escaping) {
+                    accumulate(EXPR_BEGIN.charAt(0));
+                    escaping = false;
+                    continue;
+                }
+
+                pushToken();
+
                 expressing = true;
                 i += EXPR_BEGIN.length() - 1;
                 continue;
@@ -232,33 +273,12 @@ public class TSLTokenizer {
 
             if (expressing) {
                 if (character == EXPR_END) {
+                    pushToken();
                     expressing = false;
-                    String expression = tokenAccumulator.toString();
-                    tokens.add(new TSLExpression(expression));
-                    tokenAccumulator.setLength(0);
-                } else {
-                    tokenAccumulator.append(character);
-                }
-                continue;
-            }
-
-            if (character == ESCAPE) {
-                if (escaping) {
-                    tokenAccumulator.append(ESCAPE);
-                    escaping = false;
-                } else {
-                    escaping = true;
-                }
-                continue;
-            }
-
-            if (character == GROUPING) {
-                if (escaping) {
-                    tokenAccumulator.append(GROUPING);
-                    escaping = false;
                     continue;
                 }
-                grouping = !grouping;
+
+                accumulate(character);
                 continue;
             }
 
@@ -269,24 +289,42 @@ public class TSLTokenizer {
                             TSLSyntaxError.causedNear(rule, i)
                     );
                 }
-                if (!grouping) {
-                    if (tokenAccumulator.length() != 0)
-                        tokens.add(tokenAccumulator.toString());
-                    tokenAccumulator.setLength(0);
+
+                pushToken();
+                continue;
+            }
+
+            if (character == GROUPING) {
+                if (escaping) {
+                    accumulate(GROUPING);
+                    escaping = false;
                     continue;
                 }
+
+                if (grouping) {
+                    pushToken();
+                    pushTokenGroup();
+                }
+
+                grouping = !grouping;
+                continue;
             }
 
-            if (escaping) {
-                escaping = false;
-                tokenAccumulator.append(ESCAPE);
+            if (character == ESCAPE) {
+                if (escaping) {
+                    accumulate(ESCAPE);
+                    continue;
+                }
+
+                escaping = !escaping;
+                continue;
             }
 
-            tokenAccumulator.append(character);
+            accumulate(character);
         }
 
-        if (tokenAccumulator.length() != 0)
-            tokens.add(tokenAccumulator.toString());
+        // Push token for the latest accumulation
+        pushToken();
 
         if (escaping) {
             throw new TSLSyntaxError(
@@ -314,7 +352,7 @@ public class TSLTokenizer {
 
     /* ------------------------------------------- */
 
-    public static List<Object> tokenize(String rule) throws TSLSyntaxError {
+    public static List<TSLToken> tokenize(String rule) throws TSLSyntaxError {
         TSLTokenizer tokenizer = new TSLTokenizer(rule);
         return tokenizer.intoTokens(rule);
     }

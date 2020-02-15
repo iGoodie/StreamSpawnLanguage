@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.node;
 
+import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
 
 public interface FlowNode {
@@ -11,7 +12,7 @@ public interface FlowNode {
      * @return The next node if chained successfully.
      * Returns null otherwise
      */
-    default FlowNode chain(FlowNode next) {
+    default FlowNode chain(FlowNode next, TSLContext context) {
         throw new UnsupportedOperationException("FlowNode::chain is not meant to be used on"
                 + getClass().getSimpleName());
     }

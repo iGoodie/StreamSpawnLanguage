@@ -1,6 +1,5 @@
 package net.programmer.igoodie.tsl.runtime.token;
 
-import jdk.nashorn.internal.runtime.regexp.joni.exception.InternalException;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
@@ -43,9 +42,16 @@ public class TSLExpression extends TSLToken {
     }
 
     @Override
+    public String getRaw() {
+        return TSLTokenizer.EXPR_BEGIN
+                + expression
+                + TSLTokenizer.EXPR_END;
+    }
+
+    @Override
     public String getValue(TSLContext context) {
         if (!validated) {
-            throw new InternalException("Evaluator called before validation!");
+            throw new InternalError("Evaluator called before validation!");
         }
 
         try {
@@ -57,9 +63,7 @@ public class TSLExpression extends TSLToken {
 
     @Override
     public String toString() {
-        return TSLTokenizer.EXPR_BEGIN
-                + expression
-                + TSLTokenizer.EXPR_END;
+        return this.getRaw();
     }
 
     public static void updateBindings() {

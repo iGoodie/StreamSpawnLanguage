@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.runtime.node;
 
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
+import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
 
 public class TSLEventNode implements FlowNode {
@@ -23,7 +24,7 @@ public class TSLEventNode implements FlowNode {
     }
 
     @Override
-    public FlowNode chain(FlowNode next) {
+    public FlowNode chain(FlowNode next, TSLContext context) {
         return null;
     }
 

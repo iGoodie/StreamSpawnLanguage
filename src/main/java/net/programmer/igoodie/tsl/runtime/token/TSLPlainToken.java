@@ -2,12 +2,17 @@ package net.programmer.igoodie.tsl.runtime.token;
 
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 
-public class TSLTokenPlain extends TSLToken {
+public class TSLPlainToken extends TSLToken {
 
     private String token;
 
-    public TSLTokenPlain(String token) {
+    public TSLPlainToken(String token) {
         this.token = token;
+    }
+
+    @Override
+    public String getRaw() {
+        return token;
     }
 
     @Override

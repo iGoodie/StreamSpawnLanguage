@@ -6,6 +6,8 @@ import net.programmer.igoodie.tsl.runtime.context.TSLActionArguments;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
 import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
+import net.programmer.igoodie.tsl.runtime.token.TSLTokenGroup;
 import net.programmer.igoodie.tsl.util.Resources;
 import org.junit.jupiter.api.Test;
 
@@ -28,19 +30,26 @@ public class TSLParsingTests {
         System.out.println();
 
         for (int i = 0; i < tokenizer.ruleCount(); i++) {
-            List<Object> tokens = tokenizer.intoTokens(i);
-            for (Object token : tokens) {
-                if (token instanceof TSLExpression) {
-                    TSLContext context = new TSLContext();
-                    context.setActionArguments(new TSLActionArguments()
-                            .with("mobName", "Zombie")
-                            .with("loopCount", 5));
-                    context.setEventArguments(new TSLEventArguments()
-                            .with("viewerCount", 105));
+            List<TSLToken> tokens = tokenizer.intoTokens(i);
+            TSLContext context = new TSLContext();
+            context.setActionArguments(new TSLActionArguments()
+                    .with("mobName", "Zombie")
+                    .with("loopTimes", 5));
+            context.setEventArguments(new TSLEventArguments()
+                    .with("viewerCount", 105)
+                    .with("actor", "iGoodie"));
 
-                    String eval = ((TSLExpression) token).getValue(context);
-                    System.out.println("EVALUATED: " + eval);
+            for (TSLToken token : tokens) {
+                if (token instanceof TSLExpression) {
+                    ((TSLExpression) token).validate(context);
+
+                } else if (token instanceof TSLTokenGroup) {
+                    ((TSLTokenGroup) token).validateExpressions(context);
                 }
+
+                String raw = token.getRaw();
+                String eval = token.getValue(context);
+                System.out.println(raw + " -> " + eval);
             }
         }
     }
