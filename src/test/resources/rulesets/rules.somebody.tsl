@@ -1,0 +1,4 @@
+FOR ${viewerCount+1} TIMES
+  SPAWN ${"Zombie"} ~ ~ ~
+  DISPLAYING %["${actor}' spawned ${loopTimes} zombies!"]%
+  ON Twitch Host
