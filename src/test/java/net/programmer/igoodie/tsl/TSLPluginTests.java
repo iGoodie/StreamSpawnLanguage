@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 public class TSLPluginTests {
 
     @BeforeAll
-    public static void bootstrapTwitchSpawn() {
+    public static void bootstrapTwitchSpawnLanguage() {
         TwitchSpawnLanguage.bootstrap();
     }
 

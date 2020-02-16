@@ -1,4 +1,7 @@
 FOR ${viewerCount+1} TIMES
   SPAWN ${"Zombie"} ~ ~ ~
   DISPLAYING %["${actor}' spawned ${loopTimes} zombies!"]%
+  WITH amount >= 5 # Invalid placement, will be lexed as a part of TSL Action
   ON Twitch Host
+  WITH actor IS iGoodie
+  WITH viewers IN RANGE [10,20]

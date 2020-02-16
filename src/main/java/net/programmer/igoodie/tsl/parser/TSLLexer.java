@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.parser;
 
+import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.token.TSLPlainToken;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
@@ -12,6 +13,7 @@ public class TSLLexer {
     public static final String EVENT_BEGIN = "ON";
 
     private List<TSLToken> tokens;
+    private List<TSLToken> accumulator;
 
     private List<TSLToken> actionTokens;
     private List<TSLToken> eventTokens;
@@ -19,6 +21,7 @@ public class TSLLexer {
 
     public TSLLexer(List<TSLToken> tokens) {
         this.tokens = tokens;
+        this.accumulator = new LinkedList<>();
         this.actionTokens = new LinkedList<>();
         this.eventTokens = new LinkedList<>();
         this.predicateTokens = new LinkedList<>();
@@ -39,8 +42,20 @@ public class TSLLexer {
     }
 
     private List<TSLToken> extractTokens(int firstIndex, int lastIndex) {
+        return extractTokens(this.tokens, firstIndex, lastIndex);
+    }
+
+    private List<TSLToken> extractTokens(List<TSLToken> tokens, int firstIndex, int lastIndex) {
         List<TSLToken> subview = tokens.subList(firstIndex, lastIndex + 1);
         return new LinkedList<>(subview);
+    }
+
+    public void pushPart() {
+        if (accumulator.get(0).getRaw().equalsIgnoreCase(EVENT_BEGIN)) {
+            eventTokens = extractTokens(accumulator, 1, accumulator.size() - 1);
+        } else {
+            predicateTokens.add(extractTokens(accumulator, 0, accumulator.size() - 1));
+        }
     }
 
     /* ---------------------------------------------- */
@@ -52,7 +67,21 @@ public class TSLLexer {
 
         actionTokens = extractTokens(0, indexOf(EVENT_BEGIN) - 1);
 
-        // TODO:
+        for (int i = indexOf(EVENT_BEGIN); i < tokens.size(); i++) {
+            TSLToken token = tokens.get(i);
+
+            if (TwitchSpawnLanguage.getPredicateDefinition(token.getRaw()) != null) {
+                pushPart();
+                accumulator.clear();
+
+            } else if (i == tokens.size() - 1) {
+                accumulator.add(token);
+                pushPart();
+                break;
+            }
+
+            accumulator.add(token);
+        }
     }
 
     public List<TSLToken> getActionTokens() {

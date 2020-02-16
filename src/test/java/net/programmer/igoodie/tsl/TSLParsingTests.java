@@ -10,6 +10,7 @@ import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import net.programmer.igoodie.tsl.runtime.token.TSLTokenGroup;
 import net.programmer.igoodie.tsl.util.Resources;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +18,11 @@ import java.io.IOException;
 import java.util.List;
 
 public class TSLParsingTests {
+
+    @BeforeAll
+    public static void bootstrapTwitchSpawnLanguage() {
+        TwitchSpawnLanguage.bootstrap();
+    }
 
     @Test
     public void foo() throws IOException, TSLSyntaxError {

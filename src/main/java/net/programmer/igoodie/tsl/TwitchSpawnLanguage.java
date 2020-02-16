@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
 import net.programmer.igoodie.tsl.definition.TSLPredicateDefinition;
 import net.programmer.igoodie.tsl.exception.TSLPluginError;
+import net.programmer.igoodie.tsl.meta.predicate.TSLWithPredicate;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +17,13 @@ public class TwitchSpawnLanguage {
     public static void bootstrap() {
         events = new HashMap<>();
         predicates = new HashMap<>();
+
+        try {
+            registerPredicateDefinition(new TSLWithPredicate());
+
+        } catch (TSLPluginError ignored) {
+            throw new InternalError();
+        }
     }
 
     private static void assertBootstrapped() {

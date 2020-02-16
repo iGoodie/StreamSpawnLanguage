@@ -1,7 +1,9 @@
 package net.programmer.igoodie.tsl.definition;
 
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
+import java.util.List;
 import java.util.Objects;
 
 public abstract class TSLPredicateDefinition {
@@ -16,7 +18,7 @@ public abstract class TSLPredicateDefinition {
         return name;
     }
 
-    public abstract boolean satisfied(TSLContext context);
+    public abstract boolean satisfied(List<TSLToken> tokens, TSLContext context);
 
     @Override
     public boolean equals(Object other) {
