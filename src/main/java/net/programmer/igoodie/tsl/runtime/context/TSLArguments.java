@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public abstract class TSLArguments {
+public class TSLArguments {
 
     private Map<String, Object> data;
 

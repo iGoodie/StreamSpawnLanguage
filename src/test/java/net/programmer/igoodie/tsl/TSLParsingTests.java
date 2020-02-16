@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl;
 
 import net.programmer.igoodie.tsl.definition.TSLTestEvent;
+import net.programmer.igoodie.tsl.exception.TSLParsingError;
 import net.programmer.igoodie.tsl.exception.TSLPluginError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
@@ -55,7 +56,7 @@ public class TSLParsingTests {
     }
 
     @Test
-    public void parsingTest() throws IOException, TSLSyntaxError {
+    public void parsingTest() throws TSLParsingError {
         String tsl = Resources.readTSL("rules.somebody.tsl");
 
         TSLParser parser = new TSLParser(tsl);

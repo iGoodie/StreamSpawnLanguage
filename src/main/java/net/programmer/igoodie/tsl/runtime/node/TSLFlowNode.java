@@ -21,6 +21,10 @@ public abstract class TSLFlowNode {
         return definition;
     }
 
+    public List<TSLToken> getTokens() {
+        return tokens;
+    }
+
     /* ---------------------------------------- */
 
     /**

@@ -14,6 +14,8 @@ public class TSLTestEvent extends TSLEventDefinition {
     @Override
     public TSLEventArguments getSampleArguments() {
         return new TSLEventArguments()
+                .with("actor", "iGoodie")
+                .with("viewers", 12345)
                 .with("property1", false)
                 .with("property2", 12345);
     }

@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
+import net.programmer.igoodie.tsl.definition.TSLPredicateDefinition;
 import net.programmer.igoodie.tsl.exception.TSLParsingError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
@@ -60,9 +61,14 @@ public class TSLParser {
         lexer.intoParts();
 
         TSLContext validationContext = new TSLContext();
+
         TSLEventNode eventNode = parseEvent(lexer.getEventTokens(), validationContext);
 
-        // TODO: Parse predicated
+        List<TSLPredicateNode> predicateNodes = new LinkedList<>();
+        for (List<TSLToken> predicateTokenList : lexer.getPredicateTokens()) {
+            predicateNodes.add(parsePredicate(predicateTokenList, validationContext));
+        }
+
         // TODO: Parse action
         // TODO: Chain all
 
@@ -71,7 +77,8 @@ public class TSLParser {
 
     /* ---------------------------- */
 
-    public static TSLEventNode parseEvent(List<TSLToken> eventTokens, TSLContext validationContext) throws TSLSyntaxError {
+    public static TSLEventNode parseEvent(List<TSLToken> eventTokens,
+                                          TSLContext validationContext) throws TSLSyntaxError {
         if (!eventTokens.stream().allMatch(TSLToken::isPlain)) {
             throw new TSLSyntaxError(
                     "Expected all event tokens to be a plain token.",
@@ -94,11 +101,46 @@ public class TSLParser {
 
         eventDefinition.validate(eventTokens, validationContext);
 
+        validationContext.setEventDefinition(eventDefinition);
         validationContext.setEventArguments(eventDefinition.getSampleArguments());
         return new TSLEventNode(eventDefinition, eventTokens);
     }
 
-    private static void chainAll(TSLEventNode eventNode, List<TSLPredicateNode> predicateNodes, TSLActionNode actionNode) {
+    public static TSLPredicateNode parsePredicate(List<TSLToken> predicateTokens,
+                                                  TSLContext validationContext) throws TSLSyntaxError {
+        System.out.println("Parsing " + predicateTokens);
+
+        if (predicateTokens.size() < 1) {
+            throw new TSLSyntaxError("Unexpected amount of tokens");
+        }
+
+        TSLToken predicateName = predicateTokens.get(0);
+
+        if (!predicateName.isPlain()) {
+            throw new TSLSyntaxError(
+                    "Expected predicate name to be a plain token",
+                    TSLSyntaxError.causedNear(predicateTokens)
+            );
+        }
+
+        TSLPredicateDefinition predicateDefinition = TwitchSpawnLanguage.getPredicateDefinition(predicateName.getRaw());
+
+        if (predicateDefinition == null) {
+            throw new TSLSyntaxError(
+                    "Unexpected predicate begin: " + predicateName,
+                    TSLSyntaxError.causedNear(predicateTokens)
+            );
+        }
+
+        predicateDefinition.validate(predicateTokens, validationContext);
+
+        validationContext.addPredicateDefinition(predicateDefinition);
+        return new TSLPredicateNode(predicateDefinition, predicateTokens);
+    }
+
+    private static void chainAll(TSLEventNode eventNode,
+                                 List<TSLPredicateNode> predicateNodes,
+                                 TSLActionNode actionNode) {
         TSLFlowNode currentNode = eventNode;
 
         for (TSLPredicateNode predicateNode : predicateNodes) {

@@ -24,7 +24,7 @@ public class TSLWithPredicate extends TSLPredicateDefinition {
             );
         }
 
-        TSLToken propertyToken = tokens.get(0);
+        TSLToken propertyToken = tokens.get(1);
 
         if (!propertyToken.isPlain()) {
             throw new TSLSyntaxError(
@@ -54,7 +54,7 @@ public class TSLWithPredicate extends TSLPredicateDefinition {
 
     @Override
     public TSLArguments getSampleArguments() {
-        return null; // TODO
+        return new TSLArguments(); // TODO
     }
 
 }
