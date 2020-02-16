@@ -1,5 +1,10 @@
 package net.programmer.igoodie.tsl.exception;
 
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class TSLSyntaxError extends TSLError {
 
     private static final int ELLIPSIS_CHARS = 10; // ...? + this + 1 + this + ...?
@@ -26,6 +31,10 @@ public class TSLSyntaxError extends TSLError {
     }
 
     /* --------------------------------- */
+
+    public static String causedNear(List<TSLToken> tokens) {
+        return tokens.stream().map(TSLToken::getRaw).collect(Collectors.joining(" "));
+    }
 
     public static String causedNear(String script, int causedIndex) {
         int startIndex = Math.max(0, causedIndex - ELLIPSIS_CHARS);

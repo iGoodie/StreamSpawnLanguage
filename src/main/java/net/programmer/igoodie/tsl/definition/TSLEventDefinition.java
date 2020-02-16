@@ -1,21 +1,18 @@
 package net.programmer.igoodie.tsl.definition;
 
+import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.*;
 
-public abstract class TSLEventDefinition {
+public abstract class TSLEventDefinition extends TSLDefinition {
 
-    private String name;
     private Set<String> acceptedProperties;
 
     public TSLEventDefinition(String name) {
-        this.name = name;
+        super(name);
         this.acceptedProperties = Collections.unmodifiableSet(getSampleArguments().getMap().keySet());
-    }
-
-    public String getName() {
-        return name;
     }
 
     public boolean acceptsProperty(String property) {
@@ -26,22 +23,19 @@ public abstract class TSLEventDefinition {
         return acceptedProperties;
     }
 
+    /* ----------------------------------------- */
+
+    @Override
+    public final void validate(List<TSLToken> tokens, TSLContext context) {
+        // A TSL Event definition is always valid, once its name is matched
+    }
+
+    @Override
+    public final boolean satisfies(List<TSLToken> tokens, TSLContext context) {
+        return true; // A TSL Event definition always satisfies the context, once its name is matched
+    }
+
+    @Override
     public abstract TSLEventArguments getSampleArguments();
-
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-
-        if (!(other instanceof TSLEventDefinition))
-            return false;
-
-        TSLEventDefinition that = (TSLEventDefinition) other;
-        return this.name.equalsIgnoreCase(that.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
-    }
 
 }
