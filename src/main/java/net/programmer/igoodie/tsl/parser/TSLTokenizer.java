@@ -354,7 +354,8 @@ public class TSLTokenizer {
 
     public static List<TSLToken> tokenize(String rule) throws TSLSyntaxError {
         TSLTokenizer tokenizer = new TSLTokenizer(rule);
-        return tokenizer.intoTokens(rule);
+        List<String> rules = tokenizer.intoRules();
+        return tokenizer.intoTokens(rules.get(0));
     }
 
 }

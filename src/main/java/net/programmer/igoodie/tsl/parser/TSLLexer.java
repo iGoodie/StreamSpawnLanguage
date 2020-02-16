@@ -1,7 +1,70 @@
 package net.programmer.igoodie.tsl.parser;
 
-/*
- * A lexer is basically a tokenizer, but it usually attaches extra context to the tokens
- * -- this token is a number, that token is a string literal, this other token is an equality operator.
- */
-public class TSLLexer {}
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.runtime.token.TSLPlainToken;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
+
+import java.util.LinkedList;
+import java.util.List;
+
+public class TSLLexer {
+
+    public static final String EVENT_BEGIN = "ON";
+
+    private List<TSLToken> tokens;
+
+    private List<TSLToken> actionTokens;
+    private List<TSLToken> eventTokens;
+    private List<List<TSLToken>> predicateTokens;
+
+    public TSLLexer(List<TSLToken> tokens) {
+        this.tokens = tokens;
+        this.actionTokens = new LinkedList<>();
+        this.eventTokens = new LinkedList<>();
+        this.predicateTokens = new LinkedList<>();
+    }
+
+    /* ---------------------------------------------- */
+
+    private int indexOf(String plainToken) {
+        for (int i = 0; i < tokens.size(); i++) {
+            TSLToken token = tokens.get(i);
+
+            if (token instanceof TSLPlainToken && token.getRaw().equalsIgnoreCase(plainToken)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private List<TSLToken> extractTokens(int firstIndex, int lastIndex) {
+        List<TSLToken> subview = tokens.subList(firstIndex, lastIndex + 1);
+        return new LinkedList<>(subview);
+    }
+
+    /* ---------------------------------------------- */
+
+    public void intoParts() throws TSLSyntaxError {
+        if (indexOf(EVENT_BEGIN) == -1) {
+            throw new TSLSyntaxError("Missing event statement.");
+        }
+
+        actionTokens = extractTokens(0, indexOf(EVENT_BEGIN) - 1);
+
+        // TODO:
+    }
+
+    public List<TSLToken> getActionTokens() {
+        return actionTokens;
+    }
+
+    public List<TSLToken> getEventTokens() {
+        return eventTokens;
+    }
+
+    public List<List<TSLToken>> getPredicateTokens() {
+        return predicateTokens;
+    }
+
+}

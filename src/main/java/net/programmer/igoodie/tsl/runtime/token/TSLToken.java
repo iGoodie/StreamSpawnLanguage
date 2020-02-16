@@ -8,4 +8,8 @@ public abstract class TSLToken {
 
     public abstract String getValue(TSLContext context);
 
+    @Override
+    public String toString() {
+        return getRaw();
+    }
 }

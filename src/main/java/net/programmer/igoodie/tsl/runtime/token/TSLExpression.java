@@ -61,11 +61,6 @@ public class TSLExpression extends TSLToken {
         }
     }
 
-    @Override
-    public String toString() {
-        return this.getRaw();
-    }
-
     public static void updateBindings() {
         TSLExpressionBindings.updateBinding(BINDINGS);
     }

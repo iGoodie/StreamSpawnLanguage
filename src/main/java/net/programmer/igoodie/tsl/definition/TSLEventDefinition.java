@@ -36,7 +36,7 @@ public abstract class TSLEventDefinition {
             return false;
 
         TSLEventDefinition that = (TSLEventDefinition) other;
-        return this.name.toLowerCase().equals(that.name.toLowerCase());
+        return this.name.equalsIgnoreCase(that.name);
     }
 
     @Override
