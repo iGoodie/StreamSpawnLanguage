@@ -60,4 +60,15 @@ public class TSLContext {
         return actionArguments;
     }
 
+    @Override
+    public String toString() {
+        return "TSLContext:" +
+                "\n - def(event) = " + eventDefinition +
+                ",\n - def(predicate) = " + predicateDefinitions +
+                ",\n - def(action) = " + actionDefinition +
+                ",\n - args(event) = " + eventArguments +
+                ",\n - args(action) = " + actionArguments +
+                "\n}";
+    }
+
 }

@@ -50,7 +50,7 @@ public class TSLLexer {
         return new LinkedList<>(subview);
     }
 
-    public void pushPart() {
+    private void pushPart() {
         if (accumulator.get(0).getRaw().equalsIgnoreCase(EVENT_BEGIN)) {
             eventTokens = extractTokens(accumulator, 1, accumulator.size() - 1);
         } else {

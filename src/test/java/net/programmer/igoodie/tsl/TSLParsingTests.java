@@ -1,8 +1,12 @@
 package net.programmer.igoodie.tsl;
 
+import net.programmer.igoodie.tsl.definition.TSLTestEvent;
+import net.programmer.igoodie.tsl.exception.TSLPluginError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
+import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.TSLTokenizer;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.context.TSLActionArguments;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
@@ -22,43 +26,12 @@ public class TSLParsingTests {
     @BeforeAll
     public static void bootstrapTwitchSpawnLanguage() {
         TwitchSpawnLanguage.bootstrap();
-    }
 
-    @Test
-    public void foo() throws IOException, TSLSyntaxError {
-        String tsl = Resources.readTSL("rules.somebody.tsl");
+        try {
+            TwitchSpawnLanguage.registerEventDefinition(new TSLTestEvent());
 
-        TSLTokenizer tokenizer = new TSLTokenizer(tsl);
-        List<String> rules = tokenizer.intoRules();
-
-        System.out.println("Parsed rules:");
-        rules.stream().map(rule -> " - " + rule)
-                .forEach(System.out::println);
-
-        System.out.println();
-
-        for (int i = 0; i < tokenizer.ruleCount(); i++) {
-            List<TSLToken> tokens = tokenizer.intoTokens(i);
-            TSLContext context = new TSLContext();
-            context.setActionArguments(new TSLActionArguments()
-                    .with("mobName", "Zombie")
-                    .with("loopTimes", 5));
-            context.setEventArguments(new TSLEventArguments()
-                    .with("viewerCount", 105)
-                    .with("actor", "iGoodie"));
-
-            for (TSLToken token : tokens) {
-                if (token instanceof TSLExpression) {
-                    ((TSLExpression) token).validate(context);
-
-                } else if (token instanceof TSLTokenGroup) {
-                    ((TSLTokenGroup) token).validateExpressions(context);
-                }
-
-                String raw = token.getRaw();
-                String eval = token.getValue(context);
-                System.out.println(raw + " -> " + eval);
-            }
+        } catch (TSLPluginError tslPluginError) {
+            tslPluginError.printStackTrace();
         }
     }
 
@@ -79,7 +52,14 @@ public class TSLParsingTests {
         lexer.getPredicateTokens().forEach(predicates -> {
             System.out.println(" - " + predicates);
         });
+    }
 
+    @Test
+    public void parsingTest() throws IOException, TSLSyntaxError {
+        String tsl = Resources.readTSL("rules.somebody.tsl");
+
+        TSLParser parser = new TSLParser(tsl);
+        TSLRuleset ruleset = parser.parse();
     }
 
 }

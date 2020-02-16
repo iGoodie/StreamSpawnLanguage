@@ -12,4 +12,8 @@ public class TSLRuleset {
 
     // TODO
 
+
+    public Map<TSLEventDefinition, TSLEventNode> getHandlers() {
+        return handlers;
+    }
 }

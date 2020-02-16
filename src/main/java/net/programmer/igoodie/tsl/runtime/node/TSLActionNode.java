@@ -1,23 +1,36 @@
 package net.programmer.igoodie.tsl.runtime.node;
 
+import net.programmer.igoodie.tsl.definition.TSLActionDefinition;
+import net.programmer.igoodie.tsl.definition.TSLDefinition;
 import net.programmer.igoodie.tsl.runtime.context.TSLActionArguments;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
-public abstract class TSLActionNode implements FlowNode {
+import java.util.List;
 
-    @Override
-    public FlowNode chain(FlowNode next, TSLContext context) {
-        return null;
+public abstract class TSLActionNode extends TSLFlowNode {
+
+    public TSLActionNode(TSLActionDefinition definition, List<TSLToken> tokens) {
+        super(definition, tokens);
     }
 
     @Override
-    public boolean process(TSLEventArguments arguments) {
-        return false;
+    public TSLActionDefinition getDefinition() {
+        return (TSLActionDefinition) definition;
     }
 
-    public TSLActionArguments getActionArguments() {
-        return new TSLActionArguments();
+    /* -------------------------------- */
+
+    @Override
+    public TSLFlowNode chain(TSLFlowNode next) {
+        return super.chain(next);
+    }
+
+    @Override
+    public boolean process(TSLContext context) {
+        System.out.println("Reacted " + getClass().getSimpleName());
+        return true; // TODO
     }
 
 }
