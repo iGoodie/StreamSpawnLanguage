@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
+import net.programmer.igoodie.tsl.definition.TSLActionDefinition;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
 import net.programmer.igoodie.tsl.definition.TSLPredicateDefinition;
 import net.programmer.igoodie.tsl.exception.TSLParsingError;
@@ -62,11 +63,15 @@ public class TSLParser {
     private TSLEventNode parseRule(List<TSLToken> tokens) throws TSLSyntaxError {
         TwitchSpawnLanguage.LOGGER.debug("Parsing rule -> %s", tokens);
 
+        // Lexe tokens into parts
         TSLLexer lexer = new TSLLexer(tokens);
         lexer.intoParts();
 
+        // Create an empty context. It'll be filled as nodes are parsed
         TSLContext validationContext = new TSLContext();
+        validationContext.setStreamer("TestGuy123");
 
+        // Parse nodes
         TSLEventNode eventNode = parseEvent(lexer.getEventTokens(), validationContext);
         TwitchSpawnLanguage.LOGGER.debug("Parsed event -> %s", eventNode.getDefinition().getName());
 
@@ -77,10 +82,11 @@ public class TSLParser {
             TwitchSpawnLanguage.LOGGER.debug("Parsed predicate -> %s", predicateNode.getDefinition().getName());
         }
 
-        // TODO: Parse action
+        TSLActionNode actionNode = parseAction(lexer.getActionTokens(), validationContext);
+        TwitchSpawnLanguage.LOGGER.debug("Parsed action -> %s", actionNode.getDefinition().getName());
 
-        chainAll(eventNode, predicateNodes, null); // TODO: <- Replace null with action node!
-
+        // Chain all and return
+        chainAll(eventNode, predicateNodes, actionNode);
         return eventNode;
     }
 
@@ -88,6 +94,8 @@ public class TSLParser {
 
     public static TSLEventNode parseEvent(List<TSLToken> eventTokens,
                                           TSLContext validationContext) throws TSLSyntaxError {
+        TwitchSpawnLanguage.LOGGER.trace("Parsing event with tokens -> %s", eventTokens);
+
         if (!eventTokens.stream().allMatch(TSLToken::isPlain)) {
             throw new TSLSyntaxError(
                     "Expected all event tokens to be a plain token.",
@@ -108,7 +116,16 @@ public class TSLParser {
             );
         }
 
-        eventDefinition.validate(eventTokens, validationContext);
+        for (TSLToken eventToken : eventTokens) {
+            if (!eventToken.validate(validationContext)) {
+                throw new TSLSyntaxError(
+                        "Invalid token -> " + eventToken.getRaw(),
+                        TSLSyntaxError.causedNear(eventTokens)
+                );
+            }
+        }
+
+        eventDefinition.validateSyntax(eventTokens, validationContext);
 
         validationContext.setEventDefinition(eventDefinition);
         validationContext.setEventArguments(eventDefinition.getSampleArguments());
@@ -117,6 +134,8 @@ public class TSLParser {
 
     public static TSLPredicateNode parsePredicate(List<TSLToken> predicateTokens,
                                                   TSLContext validationContext) throws TSLSyntaxError {
+        TwitchSpawnLanguage.LOGGER.trace("Parsing predicate with tokens -> %s", predicateTokens);
+
         if (predicateTokens.size() < 1) {
             throw new TSLSyntaxError("Unexpected count of tokens");
         }
@@ -139,10 +158,55 @@ public class TSLParser {
             );
         }
 
-        predicateDefinition.validate(predicateTokens, validationContext);
+        for (TSLToken predicateToken : predicateTokens) {
+            if (!predicateToken.validate(validationContext)) {
+                throw new TSLSyntaxError(
+                        "Invalid token -> " + predicateToken.getRaw(),
+                        TSLSyntaxError.causedNear(predicateTokens)
+                );
+            }
+        }
+
+        predicateDefinition.validateSyntax(predicateTokens, validationContext);
 
         validationContext.addPredicateDefinition(predicateDefinition);
         return new TSLPredicateNode(predicateDefinition, predicateTokens);
+    }
+
+    public static TSLActionNode parseAction(List<TSLToken> actionTokens,
+                                            TSLContext validationContext) throws TSLSyntaxError {
+        TwitchSpawnLanguage.LOGGER.trace("Parsing action with tokens -> %s", actionTokens);
+
+        TSLToken actionName = actionTokens.get(0);
+
+        if (!actionName.isPlain()) {
+            throw new TSLSyntaxError(
+                    "Expected action name to be a plain token",
+                    TSLSyntaxError.causedNear(actionTokens)
+            );
+        }
+
+        TSLActionDefinition actionDefinition = TwitchSpawnLanguage.getActionDefinition(actionName.getRaw());
+
+        if (actionDefinition == null) {
+            throw new TSLSyntaxError(
+                    "Unexpected action name: " + actionName,
+                    TSLSyntaxError.causedNear(actionTokens)
+            );
+        }
+
+        for (TSLToken actionToken : actionTokens) {
+            if (!actionToken.validate(validationContext)) {
+                throw new TSLSyntaxError(
+                        "Invalid token -> " + actionToken.getRaw(),
+                        TSLSyntaxError.causedNear(actionTokens)
+                );
+            }
+        }
+
+        actionDefinition.validateSyntax(actionTokens, validationContext);
+
+        return new TSLActionNode(actionDefinition, actionTokens);
     }
 
     private static void chainAll(TSLEventNode eventNode,

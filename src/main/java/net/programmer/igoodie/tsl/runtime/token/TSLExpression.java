@@ -21,10 +21,11 @@ public class TSLExpression extends TSLToken {
         this.expression = expression;
     }
 
-    public void validate(TSLContext validationContext) throws TSLSyntaxError {
+    public boolean validate(TSLContext validationContext) throws TSLSyntaxError {
         try {
             evaluate(validationContext);
             validated = true;
+            return true;
 
         } catch (ScriptException e) {
             throw new TSLSyntaxError(

@@ -11,6 +11,12 @@ public class TSLPlainToken extends TSLToken {
     }
 
     @Override
+    public boolean validate(TSLContext context) {
+        // Good guy plain token;
+        return true; // A plain token is always a valid token
+    }
+
+    @Override
     public String getRaw() {
         return token;
     }

@@ -7,10 +7,12 @@ import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class TSLLexer {
 
     public static final String EVENT_BEGIN = "ON";
+    public static final String NOTIFICATION_BEGIN = "DISPLAYING";
 
     private List<TSLToken> tokens;
     private List<TSLToken> accumulator;
@@ -94,6 +96,42 @@ public class TSLLexer {
 
     public List<List<TSLToken>> getPredicateTokens() {
         return predicateTokens;
+    }
+
+    /* ---------------------------------------------- */
+
+    public static List<TSLToken> actionPart(List<TSLToken> actionTokens) {
+        return actionPart(actionTokens, NOTIFICATION_BEGIN);
+    }
+
+    public static List<TSLToken> actionPart(List<TSLToken> actionTokens, String until) {
+        List<TSLToken> actionPart = new LinkedList<>();
+
+        // Does not include the action name
+        for (int i = 1; i < actionTokens.size(); i++) {
+            TSLToken actionToken = actionTokens.get(i);
+            if (actionToken.getRaw().equalsIgnoreCase(until))
+                break;
+            actionPart.add(actionToken);
+        }
+
+        return actionPart;
+    }
+
+    public static List<TSLToken> notificationPart(List<TSLToken> actionTokens) {
+        int beginIndex = IntStream.range(0, actionTokens.size())
+                .filter(i -> actionTokens.get(i).getRaw().equalsIgnoreCase(NOTIFICATION_BEGIN))
+                .max().orElse(-1);
+
+        // No notification begin token, assuming no notification
+        if (beginIndex == -1)
+            return null;
+
+        List<TSLToken> notificationPart = new LinkedList<>();
+        for (int i = beginIndex + 1; i < actionTokens.size(); i++) {
+            notificationPart.add(actionTokens.get(i));
+        }
+        return notificationPart;
     }
 
 }

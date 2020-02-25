@@ -26,7 +26,7 @@ public abstract class TSLEventDefinition extends TSLDefinition {
     /* ----------------------------------------- */
 
     @Override
-    public final void validate(List<TSLToken> tokens, TSLContext context) {
+    public final void validateSyntax(List<TSLToken> tokens, TSLContext context) {
         // A TSL Event definition is always valid, once its name is matched
     }
 
@@ -38,4 +38,8 @@ public abstract class TSLEventDefinition extends TSLDefinition {
     @Override
     public abstract TSLEventArguments getSampleArguments();
 
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

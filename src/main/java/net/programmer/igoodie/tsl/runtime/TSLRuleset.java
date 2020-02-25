@@ -67,6 +67,9 @@ public class TSLRuleset {
     }
 
     public boolean dispatch(TSLEventDefinition eventDefinition, TSLEventArguments eventArguments) {
+        TwitchSpawnLanguage.LOGGER.debug("Dispatched event -> %s, args: %s",
+                eventDefinition, eventArguments);
+
         TSLEventNode eventNode = this.handlers.get(eventDefinition);
 
         TSLContext context = new TSLContext();

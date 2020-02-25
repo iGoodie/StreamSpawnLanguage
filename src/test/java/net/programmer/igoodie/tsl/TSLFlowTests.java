@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl;
 
+import net.programmer.igoodie.tsl.definition.TSLPrintAction;
 import net.programmer.igoodie.tsl.definition.TSLTestEvent;
 import net.programmer.igoodie.tsl.exception.TSLError;
 import net.programmer.igoodie.tsl.exception.TSLPluginError;
@@ -21,6 +22,7 @@ public class TSLFlowTests {
 
         try {
             TwitchSpawnLanguage.registerEventDefinition(TSLTestEvent.INSTANCE);
+            TwitchSpawnLanguage.registerActionDefinition(TSLPrintAction.INSTANCE);
 
         } catch (TSLPluginError tslPluginError) {
             tslPluginError.printStackTrace();

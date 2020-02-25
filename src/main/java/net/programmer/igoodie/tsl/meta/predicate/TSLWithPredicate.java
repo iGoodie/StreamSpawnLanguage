@@ -16,7 +16,7 @@ public class TSLWithPredicate extends TSLPredicateDefinition {
     }
 
     @Override
-    public void validate(List<TSLToken> tokens, TSLContext context) throws TSLSyntaxError {
+    public void validateSyntax(List<TSLToken> tokens, TSLContext context) throws TSLSyntaxError {
         if (tokens.size() < 3) {
             throw new TSLSyntaxError(
                     "Expected at least 3 tokens",

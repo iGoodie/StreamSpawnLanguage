@@ -21,12 +21,15 @@ public class TSLTokenGroup extends TSLToken {
         this.tokens = Collections.unmodifiableList(tokens);
     }
 
-    public void validateExpressions(TSLContext context) throws TSLSyntaxError {
+    @Override
+    public boolean validate(TSLContext context) throws TSLSyntaxError {
+        boolean valid = true;
+
         for (TSLToken token : tokens) {
-            if (token instanceof TSLExpression) {
-                ((TSLExpression) token).validate(context);
-            }
+            valid &= token.validate(context);
         }
+
+        return valid;
     }
 
     @Override
@@ -40,9 +43,26 @@ public class TSLTokenGroup extends TSLToken {
 
     @Override
     public String getValue(TSLContext context) {
-        return tokens.stream()
-                .map(token -> token.getValue(context))
-                .collect(Collectors.joining(String.valueOf(TSLTokenizer.SPACE)));
+        boolean includeDelimiter = true;
+
+        StringBuilder value = new StringBuilder();
+
+        for (TSLToken token : tokens) {
+            if (token.isExpression()) {
+                value.append(token.getValue(context));
+                includeDelimiter = false;
+                continue;
+            }
+
+            if (includeDelimiter && value.length() != 0)
+                value.append(TSLTokenizer.SPACE);
+
+            value.append(token.getValue(context));
+
+            includeDelimiter = true;
+        }
+
+        return value.toString();
     }
 
 }

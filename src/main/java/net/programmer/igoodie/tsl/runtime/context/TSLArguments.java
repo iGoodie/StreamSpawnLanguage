@@ -66,8 +66,15 @@ public class TSLArguments {
     @Override
     public String toString() {
         return data.entrySet().stream()
-                .map(entry -> String.format("'%s': '%s'", entry.getKey(), entry.getValue()))
-                .collect(Collectors.joining(",\n", "{\n", "\n}"));
+                .map(entry -> String.format("\"%s\": %s", entry.getKey(), valueToString(entry.getValue())))
+                .collect(Collectors.joining(", ", "{ ", " }"));
+    }
+
+    private String valueToString(Object value) {
+        if (value instanceof String)
+            return '"' + value.toString() + '"';
+
+        return value.toString();
     }
 
 }

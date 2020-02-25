@@ -1,8 +1,11 @@
 package net.programmer.igoodie.tsl.runtime.token;
 
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 
 public abstract class TSLToken {
+
+    public abstract boolean validate(TSLContext context) throws TSLSyntaxError;
 
     public abstract String getRaw();
 

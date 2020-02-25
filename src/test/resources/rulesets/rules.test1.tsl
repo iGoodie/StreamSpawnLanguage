@@ -1,5 +1,7 @@
-PRINT %"Hello World!"%
- DISPLAYING %%
+PRINT %"Hello World!"% ${1} ${2}
+ DISPLAYING %[
+    "Hellooo", "this is an epic -${"format"}-!"
+ ]%
  ON Test Event
  WITH property1 = false
  WITH property2 <= 20
