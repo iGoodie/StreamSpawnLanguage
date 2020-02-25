@@ -41,8 +41,7 @@ public class TSLParser {
             try {
                 List<TSLToken> tokens = tokenizer.intoTokens(i);
                 TSLEventNode eventNode = parseRule(tokens);
-
-                // TODO: Add to the ruleset!
+                ruleset.addRule(eventNode);
 
             } catch (TSLSyntaxError syntaxError) {
                 syntaxErrors.add(syntaxError);
@@ -70,7 +69,8 @@ public class TSLParser {
         }
 
         // TODO: Parse action
-        // TODO: Chain all
+
+        chainAll(eventNode, predicateNodes, null); // TODO: <- Replace null with action node!
 
         return eventNode;
     }
@@ -108,10 +108,8 @@ public class TSLParser {
 
     public static TSLPredicateNode parsePredicate(List<TSLToken> predicateTokens,
                                                   TSLContext validationContext) throws TSLSyntaxError {
-        System.out.println("Parsing " + predicateTokens);
-
         if (predicateTokens.size() < 1) {
-            throw new TSLSyntaxError("Unexpected amount of tokens");
+            throw new TSLSyntaxError("Unexpected count of tokens");
         }
 
         TSLToken predicateName = predicateTokens.get(0);

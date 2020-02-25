@@ -9,6 +9,8 @@ import java.util.List;
 
 public class TSLContext {
 
+    private String streamer;
+
     private TSLEventDefinition eventDefinition;
     private List<TSLPredicateDefinition> predicateDefinitions;
     private TSLActionDefinition actionDefinition;
@@ -18,6 +20,12 @@ public class TSLContext {
 
     public TSLContext() {
         this.predicateDefinitions = new LinkedList<>();
+    }
+
+    /* ----------------------------------------- SETTERS */
+
+    public void setStreamer(String streamer) {
+        this.streamer = streamer;
     }
 
     public void setEventDefinition(TSLEventDefinition eventDefinition) {
@@ -40,6 +48,12 @@ public class TSLContext {
         this.actionArguments = actionArguments;
     }
 
+    /* ----------------------------------------- GETTERS */
+
+    public String getStreamer() {
+        return streamer;
+    }
+
     public TSLEventDefinition getEventDefinition() {
         return eventDefinition;
     }
@@ -58,17 +72,6 @@ public class TSLContext {
 
     public TSLActionArguments getActionArguments() {
         return actionArguments;
-    }
-
-    @Override
-    public String toString() {
-        return "TSLContext:" +
-                "\n - def(event) = " + eventDefinition +
-                ",\n - def(predicate) = " + predicateDefinitions +
-                ",\n - def(action) = " + actionDefinition +
-                ",\n - args(event) = " + eventArguments +
-                ",\n - args(action) = " + actionArguments +
-                "\n}";
     }
 
 }

@@ -23,12 +23,12 @@ public abstract class TSLActionNode extends TSLFlowNode {
     /* -------------------------------- */
 
     @Override
-    public TSLFlowNode chain(TSLFlowNode next) {
+    public final TSLFlowNode chain(TSLFlowNode next) {
         return super.chain(next);
     }
 
     @Override
-    public boolean process(TSLContext context) {
+    public final boolean process(TSLContext context) {
         System.out.println("Reacted " + getClass().getSimpleName());
         return true; // TODO
     }
