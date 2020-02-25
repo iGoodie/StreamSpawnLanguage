@@ -29,7 +29,7 @@ public class TSLParsingTests {
         TwitchSpawnLanguage.bootstrap();
 
         try {
-            TwitchSpawnLanguage.registerEventDefinition(new TSLTestEvent());
+            TwitchSpawnLanguage.registerEventDefinition(TSLTestEvent.INSTANCE);
 
         } catch (TSLPluginError tslPluginError) {
             tslPluginError.printStackTrace();

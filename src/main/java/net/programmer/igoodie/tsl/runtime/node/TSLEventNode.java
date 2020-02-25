@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.node;
 
+import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
@@ -59,6 +60,8 @@ public class TSLEventNode extends TSLFlowNode {
 
     @Override
     public boolean process(TSLContext context) {
+        TwitchSpawnLanguage.LOGGER.trace("Processing -> %s", tokens);
+
         context.setEventDefinition(this.getDefinition());
 
         Iterator<TSLFlowNode> nodeIterator = childNodes.iterator();

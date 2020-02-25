@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.node;
 
+import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLActionDefinition;
 import net.programmer.igoodie.tsl.definition.TSLDefinition;
 import net.programmer.igoodie.tsl.runtime.context.TSLActionArguments;
@@ -29,7 +30,7 @@ public abstract class TSLActionNode extends TSLFlowNode {
 
     @Override
     public final boolean process(TSLContext context) {
-        System.out.println("Reacted " + getClass().getSimpleName());
+        TwitchSpawnLanguage.LOGGER.trace("Processing -> %s", tokens);
         return true; // TODO
     }
 

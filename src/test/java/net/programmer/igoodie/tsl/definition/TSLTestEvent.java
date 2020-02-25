@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class TSLTestEvent extends TSLEventDefinition {
+public final class TSLTestEvent extends TSLEventDefinition {
+
+    public static final TSLTestEvent INSTANCE = new TSLTestEvent();
 
     public TSLTestEvent() {
         super("Test Event");

@@ -28,6 +28,8 @@ public class TSLParser {
     }
 
     public TSLRuleset parse() throws TSLParsingError {
+        TwitchSpawnLanguage.LOGGER.trace("Parsing tsl script -> %s", tsl);
+
         TSLTokenizer tokenizer = new TSLTokenizer(tsl);
         List<TSLSyntaxError> syntaxErrors = new LinkedList<>();
 
@@ -52,20 +54,27 @@ public class TSLParser {
             throw new TSLParsingError(syntaxErrors);
         }
 
+        TwitchSpawnLanguage.LOGGER.debug("Parsed ruleset with %d rule(s)", tokenizer.ruleCount());
+
         return ruleset;
     }
 
     private TSLEventNode parseRule(List<TSLToken> tokens) throws TSLSyntaxError {
+        TwitchSpawnLanguage.LOGGER.debug("Parsing rule -> %s", tokens);
+
         TSLLexer lexer = new TSLLexer(tokens);
         lexer.intoParts();
 
         TSLContext validationContext = new TSLContext();
 
         TSLEventNode eventNode = parseEvent(lexer.getEventTokens(), validationContext);
+        TwitchSpawnLanguage.LOGGER.debug("Parsed event -> %s", eventNode.getDefinition().getName());
 
         List<TSLPredicateNode> predicateNodes = new LinkedList<>();
         for (List<TSLToken> predicateTokenList : lexer.getPredicateTokens()) {
-            predicateNodes.add(parsePredicate(predicateTokenList, validationContext));
+            TSLPredicateNode predicateNode = parsePredicate(predicateTokenList, validationContext);
+            predicateNodes.add(predicateNode);
+            TwitchSpawnLanguage.LOGGER.debug("Parsed predicate -> %s", predicateNode.getDefinition().getName());
         }
 
         // TODO: Parse action

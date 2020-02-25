@@ -44,7 +44,7 @@ public class TSLRuleset {
     public int ruleCount() {
         int count = 0;
         for (TSLEventNode eventNode : handlers.values()) {
-            count += eventNode.getActions().size();
+            count += eventNode.getChildren().size();
         }
         return count;
     }
@@ -75,6 +75,14 @@ public class TSLRuleset {
         context.setEventArguments(eventArguments);
 
         return eventNode.process(context);
+    }
+
+    /* ----------------------------------------- */
+
+    @Override
+    public String toString() {
+        return String.format("Streamer:%s => %d rule(s)",
+                streamer, ruleCount());
     }
 
 }

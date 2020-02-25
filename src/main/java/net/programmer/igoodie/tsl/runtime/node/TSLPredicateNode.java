@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.node;
 
+import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLPredicateDefinition;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
@@ -35,6 +36,8 @@ public class TSLPredicateNode extends TSLFlowNode {
 
     @Override
     public boolean process(TSLContext context) {
+        TwitchSpawnLanguage.LOGGER.trace("Processing -> %s", tokens);
+
         TSLPredicateDefinition definition = this.getDefinition();
 
         context.addPredicateDefinition(definition);
