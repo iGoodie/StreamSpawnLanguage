@@ -8,10 +8,12 @@ import net.programmer.igoodie.tsl.exception.TSLParsingError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.context.TSLExpressionBindings;
 import net.programmer.igoodie.tsl.runtime.node.TSLActionNode;
 import net.programmer.igoodie.tsl.runtime.node.TSLEventNode;
 import net.programmer.igoodie.tsl.runtime.node.TSLFlowNode;
 import net.programmer.igoodie.tsl.runtime.node.TSLPredicateNode;
+import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.LinkedList;
@@ -70,19 +72,23 @@ public class TSLParser {
         // Create an empty context. It'll be filled as nodes are parsed
         TSLContext validationContext = new TSLContext();
         validationContext.setStreamer("TestGuy123");
+        TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
 
         // Parse nodes
         TSLEventNode eventNode = parseEvent(lexer.getEventTokens(), validationContext);
+        TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
         TwitchSpawnLanguage.LOGGER.debug("Parsed event -> %s", eventNode.getDefinition().getName());
 
         List<TSLPredicateNode> predicateNodes = new LinkedList<>();
         for (List<TSLToken> predicateTokenList : lexer.getPredicateTokens()) {
             TSLPredicateNode predicateNode = parsePredicate(predicateTokenList, validationContext);
             predicateNodes.add(predicateNode);
+            TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
             TwitchSpawnLanguage.LOGGER.debug("Parsed predicate -> %s", predicateNode.getDefinition().getName());
         }
 
         TSLActionNode actionNode = parseAction(lexer.getActionTokens(), validationContext);
+        TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
         TwitchSpawnLanguage.LOGGER.debug("Parsed action -> %s", actionNode.getDefinition().getName());
 
         // Chain all and return

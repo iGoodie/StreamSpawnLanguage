@@ -7,7 +7,7 @@ import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.List;
 
-public class TSLActionNode extends TSLFlowNode {
+public final class TSLActionNode extends TSLFlowNode {
 
     private boolean silent = false;
 

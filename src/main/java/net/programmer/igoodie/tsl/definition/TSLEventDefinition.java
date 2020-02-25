@@ -15,11 +15,11 @@ public abstract class TSLEventDefinition extends TSLDefinition {
         this.acceptedProperties = Collections.unmodifiableSet(getSampleArguments().getMap().keySet());
     }
 
-    public boolean acceptsProperty(String property) {
+    public final boolean acceptsProperty(String property) {
         return acceptedProperties.contains(property);
     }
 
-    public Set<String> getAcceptedProperties() {
+    public final Set<String> getAcceptedProperties() {
         return acceptedProperties;
     }
 

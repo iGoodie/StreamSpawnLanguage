@@ -7,7 +7,7 @@ import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.List;
 
-public class TSLPredicateNode extends TSLFlowNode {
+public final class TSLPredicateNode extends TSLFlowNode {
 
     private TSLFlowNode nextNode;
 

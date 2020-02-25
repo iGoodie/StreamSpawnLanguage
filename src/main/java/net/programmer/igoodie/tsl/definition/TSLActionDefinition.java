@@ -41,8 +41,10 @@ public abstract class TSLActionDefinition extends TSLDefinition {
     public final boolean satisfies(List<TSLToken> tokens, TSLContext context) {
         if (notifies) {
             List<TSLToken> notificationPart = TSLLexer.notificationPart(tokens);
-            TwitchSpawnLanguage.LOGGER.trace("Displaying notification -> %s", notificationPart);
-            displayNotification(notificationPart, context);
+            if (notificationPart != null) {
+                TwitchSpawnLanguage.LOGGER.trace("Displaying notification -> %s", notificationPart);
+                displayNotification(notificationPart, context);
+            }
         }
 
         // A TSL Action always satisfies the context once it's performed

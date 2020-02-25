@@ -23,6 +23,10 @@ public class TSLRuleset {
         this.handlers = new HashMap<>();
     }
 
+    public void setStreamer(String streamer) {
+        this.streamer = streamer;
+    }
+
     public String getStreamer() {
         return streamer;
     }
