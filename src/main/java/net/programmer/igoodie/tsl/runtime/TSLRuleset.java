@@ -2,17 +2,21 @@ package net.programmer.igoodie.tsl.runtime;
 
 import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
+import net.programmer.igoodie.tsl.exception.TSLError;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
 import net.programmer.igoodie.tsl.runtime.node.TSLEventNode;
+import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TSLRuleset {
 
     private String streamer;
     private Map<TSLEventDefinition, TSLEventNode> handlers;
+    private Map<String, List<TSLToken>> captures;
 
     public TSLRuleset() {
         this(null);
@@ -21,6 +25,7 @@ public class TSLRuleset {
     public TSLRuleset(String streamer) {
         this.streamer = streamer;
         this.handlers = new HashMap<>();
+        this.captures = new HashMap<>();
     }
 
     public void setStreamer(String streamer) {
@@ -41,6 +46,12 @@ public class TSLRuleset {
         this.handlers.put(eventNode.getDefinition(), eventNode);
     }
 
+    public void addCapture(String captureName, List<TSLToken> capturedTokens) throws TSLError {
+        if (captures.containsKey(captureName))
+            throw new TSLError(String.format("%s's ruleset already contains capture with name -> %s",
+                    streamer, captureName));
+    }
+
     public boolean hasRuleFor(TSLEventDefinition eventDefinition) {
         return this.handlers.containsKey(eventDefinition);
     }
@@ -55,6 +66,10 @@ public class TSLRuleset {
 
     public TSLEventNode getHandler(TSLEventDefinition eventDefinition) {
         return this.handlers.get(eventDefinition);
+    }
+
+    public List<TSLToken> getCapture(String name) {
+        return captures.get(name);
     }
 
     /* ----------------------------------------- DISPATCHERS */

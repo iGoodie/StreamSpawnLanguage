@@ -8,6 +8,7 @@ import net.programmer.igoodie.tsl.exception.TSLParsingError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
+import net.programmer.igoodie.tsl.runtime.context.TSLDecorator;
 import net.programmer.igoodie.tsl.runtime.context.TSLExpressionBindings;
 import net.programmer.igoodie.tsl.runtime.node.TSLActionNode;
 import net.programmer.igoodie.tsl.runtime.node.TSLEventNode;
@@ -97,6 +98,10 @@ public class TSLParser {
     }
 
     /* ---------------------------- */
+
+    public static TSLDecorator parseDecorator(TSLToken decoratorToken) {
+        return null; // TODO
+    }
 
     public static TSLEventNode parseEvent(List<TSLToken> eventTokens,
                                           TSLContext validationContext) throws TSLSyntaxError {

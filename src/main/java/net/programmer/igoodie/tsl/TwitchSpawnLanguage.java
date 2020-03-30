@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl;
 
 import net.programmer.igoodie.tsl.definition.TSLActionDefinition;
+import net.programmer.igoodie.tsl.definition.TSLDecoratorDefinition;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
 import net.programmer.igoodie.tsl.definition.TSLPredicateDefinition;
 import net.programmer.igoodie.tsl.exception.TSLPluginError;
@@ -19,22 +20,22 @@ public class TwitchSpawnLanguage {
     private static Map<String, TSLEventDefinition> events; // upper(name) -> #TSLEventDefinition
     private static Map<String, TSLPredicateDefinition> predicates; // upper(name) -> #TSLPredicateDefinition
     private static Map<String, TSLActionDefinition> actions; // upper(name) -> #TSLActionDefinition
+    private static Map<String, TSLDecoratorDefinition> decorators; // lower(name) -> #TSLDecoratorDefinition
 
     public static void bootstrap() {
         events = new HashMap<>();
         predicates = new HashMap<>();
         actions = new HashMap<>();
+        decorators = new HashMap<>();
 
         try {
             LOGGER.info("Bootstrapping TwitchSpawn Language...");
             registerPredicateDefinition(new TSLWithPredicate());
             registerActionDefinition(new TSLNothingAction());
+            LOGGER.info("TwitchSpawn Language bootstrapped successfully!");
 
         } catch (TSLPluginError ignored) {
             throw new InternalError(); // <-- This shall never be thrown
-
-        } finally {
-            LOGGER.info("TwitchSpawn Language bootstrapped successfully!");
         }
     }
 
@@ -77,6 +78,16 @@ public class TwitchSpawnLanguage {
         TwitchSpawnLanguage.LOGGER.info("Registered action definition -> %s", action.getName());
     }
 
+    public static void registerDecoratorDefinition(TSLDecoratorDefinition decorator) throws TSLPluginError {
+        assertBootstrapped();
+
+        if (decorators.containsKey(decorator.getName().toLowerCase()))
+            throw new TSLPluginError("Unable to create TSL Decorator Definition as it was already declared");
+
+        decorators.put(decorator.getName().toLowerCase(), decorator);
+        TwitchSpawnLanguage.LOGGER.info("Registered decorator definition -> %s", decorator.getName());
+    }
+
     /* ----------------------------- ACCESSORS */
 
     public static TSLEventDefinition getEventDefinition(String name) {
@@ -92,6 +103,11 @@ public class TwitchSpawnLanguage {
     public static TSLActionDefinition getActionDefinition(String name) {
         assertBootstrapped();
         return actions.get(name.toUpperCase());
+    }
+
+    public static TSLDecoratorDefinition getDecoratorDefinition(String name) {
+        assertBootstrapped();
+        return decorators.get(name.toLowerCase());
     }
 
 }

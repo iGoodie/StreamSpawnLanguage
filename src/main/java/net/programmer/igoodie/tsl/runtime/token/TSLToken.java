@@ -1,6 +1,7 @@
 package net.programmer.igoodie.tsl.runtime.token;
 
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 
 public abstract class TSLToken {
@@ -21,6 +22,14 @@ public abstract class TSLToken {
 
     public boolean isExpression() {
         return this.getClass() == TSLExpression.class;
+    }
+
+    public boolean isCaptureName() {
+        return this.getRaw().startsWith(String.valueOf(TSLTokenizer.CAPTURE));
+    }
+
+    public boolean isDecorator() {
+        return getRaw().startsWith(String.valueOf(TSLTokenizer.DECORATOR));
     }
 
     public String getType() {

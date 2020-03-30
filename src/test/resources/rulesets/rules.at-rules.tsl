@@ -1,0 +1,24 @@
+$message This is a message
+
+$randomItemAction
+    EITHER
+        DROP apple
+    OR
+        DROP diamond
+
+@decorator1
+@decorator2(deco_param1,deco_param2)
+PRINT
+    $message
+    ON Twitch Follow
+
+@decorator1
+PRINT
+@decorator2(deco_param) # <- Is an error
+    $message
+    ON Twitch Follow
+    WITH foo bar baz
+
+# TODO: Decorator definitions
+# TODO: Add TSL Action perform listener (pubsub)
+# TODO: Remove notification cb from this lib

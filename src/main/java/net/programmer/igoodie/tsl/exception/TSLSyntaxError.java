@@ -27,7 +27,7 @@ public class TSLSyntaxError extends TSLError {
     @Override
     public String toString() {
         return super.toString()
-                + "\tnear -> " + causedNear;
+                + (causedNear != null ? "\tnear -> " + causedNear : "");
     }
 
     /* --------------------------------- */

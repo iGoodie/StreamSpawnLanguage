@@ -17,6 +17,10 @@ public class TSLLexer {
     private List<TSLToken> tokens;
     private List<TSLToken> accumulator;
 
+    private String captureName;
+    private List<TSLToken> capturedSnippet;
+
+    private List<TSLToken> decoratorTokens;
     private List<TSLToken> actionTokens;
     private List<TSLToken> eventTokens;
     private List<List<TSLToken>> predicateTokens;
@@ -24,9 +28,14 @@ public class TSLLexer {
     public TSLLexer(List<TSLToken> tokens) {
         this.tokens = tokens;
         this.accumulator = new LinkedList<>();
+        this.decoratorTokens = new LinkedList<>();
         this.actionTokens = new LinkedList<>();
         this.eventTokens = new LinkedList<>();
         this.predicateTokens = new LinkedList<>();
+    }
+
+    public boolean isCapture() {
+        return tokens.get(0).isCaptureName();
     }
 
     /* ---------------------------------------------- */
@@ -63,13 +72,36 @@ public class TSLLexer {
     /* ---------------------------------------------- */
 
     public void intoParts() throws TSLSyntaxError {
-        if (indexOf(EVENT_BEGIN) == -1) {
+        if (isCapture()) {
+            captureName = tokens.get(0).getRaw().substring(1);
+            capturedSnippet = extractTokens(1, tokens.size() - 1);
+            if (captureName.isEmpty()) {
+                throw new TSLSyntaxError("Capture missing a name");
+            }
+            if (capturedSnippet.isEmpty()) {
+                throw new TSLSyntaxError("Captures cannot be empty");
+            }
+            return;
+        }
+
+        int beginningOfEventPart = indexOf(EVENT_BEGIN);
+
+        if (beginningOfEventPart == -1) {
             throw new TSLSyntaxError("Missing event statement.");
         }
 
-        actionTokens = extractTokens(0, indexOf(EVENT_BEGIN) - 1);
+        int beginningOfActionPart = 0;
 
-        for (int i = indexOf(EVENT_BEGIN); i < tokens.size(); i++) {
+        while (beginningOfActionPart < beginningOfEventPart) {
+            TSLToken token = tokens.get(beginningOfActionPart);
+            if (!token.isDecorator()) break;
+            decoratorTokens.add(token);
+            beginningOfActionPart++;
+        }
+
+        actionTokens = extractTokens(beginningOfActionPart, indexOf(EVENT_BEGIN) - 1);
+
+        for (int i = beginningOfEventPart; i < tokens.size(); i++) {
             TSLToken token = tokens.get(i);
 
             if (TwitchSpawnLanguage.getPredicateDefinition(token.getRaw()) != null) {
@@ -84,6 +116,18 @@ public class TSLLexer {
 
             accumulator.add(token);
         }
+    }
+
+    public String getCaptureName() {
+        return captureName;
+    }
+
+    public List<TSLToken> getCapturedSnippet() {
+        return capturedSnippet;
+    }
+
+    public List<TSLToken> getDecoratorTokens() {
+        return decoratorTokens;
     }
 
     public List<TSLToken> getActionTokens() {

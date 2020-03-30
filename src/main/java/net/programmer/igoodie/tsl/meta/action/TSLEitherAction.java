@@ -7,10 +7,10 @@ import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.List;
 
-public class TSLNothingAction extends TSLActionDefinition {
+public class TSLEitherAction extends TSLActionDefinition {
 
-    public TSLNothingAction() {
-        super("NOTHING");
+    public TSLEitherAction() {
+        super("EITHER");
     }
 
     @Override

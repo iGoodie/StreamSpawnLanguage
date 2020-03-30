@@ -20,6 +20,8 @@ public class TSLTokenizer {
     public static final char SPACE = ' ';
     public static final char GROUPING = '%';
     public static final char ESCAPE = '\\';
+    public static final char DECORATOR = '@';
+    public static final char CAPTURE = '$';
 
     private String script;
     private List<String> rules;
@@ -42,6 +44,12 @@ public class TSLTokenizer {
         if (rules == null) {
             throw new IllegalStateException("Cannot get rule count before rule tokenization");
         }
+    }
+
+    private boolean allDecorators() {
+        return tokens.stream()
+                .map(TSLToken::getRaw)
+                .allMatch(token -> token.startsWith(String.valueOf(DECORATOR)));
     }
 
     private String quoteRegex(char character) {
@@ -79,6 +87,10 @@ public class TSLTokenizer {
 
     private boolean isIndentedLine(String line) {
         return line.matches("^[ \t].*$");
+    }
+
+    private boolean isDecoratorLine(String line) {
+        return line.startsWith(String.valueOf(DECORATOR));
     }
 
     private String trimMultilineComments(String script) throws TSLSyntaxError {
@@ -189,6 +201,12 @@ public class TSLTokenizer {
         grouppedTokens.clear();
     }
 
+    private List<TSLToken> ejectTokens() {
+        List<TSLToken> tokensCopy = new LinkedList<>(tokens);
+        tokens.clear();
+        return tokensCopy;
+    }
+
     /* ------------------------------------------- */
 
     public List<String> intoRules() throws TSLSyntaxError {
@@ -210,8 +228,20 @@ public class TSLTokenizer {
             // Get to the next rule on empty line(s)
             if (isEmptyLine(line)) {
                 if (ruleAccumulator.length() != 0)
-                    rules.add(ruleAccumulator.toString());
+                    rules.add(ruleAccumulator.toString().trim());
                 ruleAccumulator.setLength(0); // Reset
+                continue;
+            }
+
+            // Append decorators
+            if (isDecoratorLine(line)) {
+                if (!allDecorators()) {
+                    throw new TSLSyntaxError(
+                            "Found unexpected decorator at line " + (i + 1),
+                            TSLSyntaxError.causedNear(line, 0)
+                    );
+                }
+                ruleAccumulator.append(SPACE).append(line.trim());
                 continue;
             }
 
@@ -228,16 +258,15 @@ public class TSLTokenizer {
             }
 
             // Not indented nor empty, expected indent
-            if (ruleAccumulator.length() != 0) {
+            if (ruleAccumulator.length() != 0 && !allDecorators()) {
                 throw new TSLSyntaxError(
                         "Missing indent at line " + (i + 1),
                         TSLSyntaxError.causedNear(line, 0)
                 );
             }
 
-            // Reset accumulation
-            ruleAccumulator.setLength(0);
-            ruleAccumulator.append(line.trim());
+            // By default, append the whole line
+            ruleAccumulator.append(SPACE).append(line.trim());
         }
 
         // Add last accumulation, if not empty
@@ -347,7 +376,7 @@ public class TSLTokenizer {
             );
         }
 
-        return tokens;
+        return ejectTokens();
     }
 
     /* ------------------------------------------- */
