@@ -1,6 +1,8 @@
 package net.programmer.igoodie.exampleplugin;
 
 import net.programmer.igoodie.exampleplugin.actions.ExamplePrintAction;
+import net.programmer.igoodie.exampleplugin.decorators.MyDecorator;
+import net.programmer.igoodie.exampleplugin.decorators.MyParameterDecorator;
 import net.programmer.igoodie.exampleplugin.events.ExampleEvent;
 import net.programmer.igoodie.exampleplugin.lambda.Number2ToNumberFunction;
 import net.programmer.igoodie.exampleplugin.lambda.Number3ToNumberFunction;
@@ -22,6 +24,7 @@ public class ExamplePlugin {
 
     public static void initialize() {
         try {
+            registerDecorators();
             registerEvents();
             registerPredicates();
             registerActions();
@@ -32,6 +35,11 @@ public class ExamplePlugin {
             e.printStackTrace();
             System.exit(-1);
         }
+    }
+
+    public static void registerDecorators() throws TSLPluginError {
+        TwitchSpawnLanguage.registerDecoratorDefinition(new MyDecorator());
+        TwitchSpawnLanguage.registerDecoratorDefinition(new MyParameterDecorator());
     }
 
     public static void registerEvents() throws TSLPluginError {

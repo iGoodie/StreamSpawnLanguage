@@ -11,9 +11,29 @@ public class TSLRule {
     private TSLFlowNode headFlowNode;
     private List<TSLDecorator> decorators;
 
-    public void perform(String streamer, TSLContext context) {
+    public TSLRule(TSLFlowNode headFlowNode, List<TSLDecorator> decorators) {
+
+    }
+
+    /* ------------------------------------------- */
+
+    public boolean hasDecorator(String name) {
+        return getDecorator(name) != null;
+    }
+
+    public TSLDecorator getDecorator(String name) {
+        return decorators.stream()
+                .filter(decorator -> decorator.getDefinition().getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /* ------------------------------------------- */
+
+    public void perform(TSLContext context) {
+        context.setAssociatedRule(this);
         // TODO
-        System.out.println("TODO: TSLRule:perform(streamer, context)");
+        System.out.println("TODO: TSLRule:perform(context)");
     }
 
 }

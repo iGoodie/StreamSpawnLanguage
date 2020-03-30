@@ -3,6 +3,7 @@ package net.programmer.igoodie.tsl.runtime.context;
 import net.programmer.igoodie.tsl.definition.TSLActionDefinition;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
 import net.programmer.igoodie.tsl.definition.TSLPredicateDefinition;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,7 @@ public class TSLContext {
 
     private TSLEventArguments eventArguments;
     private TSLActionArguments actionArguments;
+    private TSLRule associatedRule;
 
     public TSLContext() {
         this.predicateDefinitions = new LinkedList<>();
@@ -26,6 +28,10 @@ public class TSLContext {
 
     public void setStreamer(String streamer) {
         this.streamer = streamer;
+    }
+
+    public void setAssociatedRule(TSLRule associatedRule) {
+        this.associatedRule = associatedRule;
     }
 
     public void setEventDefinition(TSLEventDefinition eventDefinition) {
@@ -52,6 +58,10 @@ public class TSLContext {
 
     public String getStreamer() {
         return streamer;
+    }
+
+    public TSLRule getAssociatedRule() {
+        return associatedRule;
     }
 
     public TSLEventDefinition getEventDefinition() {

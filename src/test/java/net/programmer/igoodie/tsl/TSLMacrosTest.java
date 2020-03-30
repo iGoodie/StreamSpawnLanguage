@@ -1,5 +1,6 @@
 package net.programmer.igoodie.tsl;
 
+import net.programmer.igoodie.exampleplugin.ExamplePlugin;
 import net.programmer.igoodie.tsl.definition.TSLPrintAction;
 import net.programmer.igoodie.tsl.definition.TSLTestEvent;
 import net.programmer.igoodie.tsl.exception.TSLError;
@@ -7,6 +8,8 @@ import net.programmer.igoodie.tsl.exception.TSLPluginError;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.TSLTokenizer;
+import net.programmer.igoodie.tsl.runtime.TSLRuleset;
+import net.programmer.igoodie.tsl.runtime.context.TSLDecorator;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 import net.programmer.igoodie.tsl.util.Resources;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,18 +23,11 @@ public class TSLMacrosTest {
     @BeforeAll
     public static void bootstrapTwitchSpawnLanguage() {
         TwitchSpawnLanguage.bootstrap();
-
-        try {
-            TwitchSpawnLanguage.registerEventDefinition(TSLTestEvent.INSTANCE);
-            TwitchSpawnLanguage.registerActionDefinition(TSLPrintAction.INSTANCE);
-
-        } catch (TSLPluginError tslPluginError) {
-            tslPluginError.printStackTrace();
-        }
+        ExamplePlugin.initialize();
     }
 
     @Test
-    @DisplayName("should parse macros")
+    @DisplayName("should lexe macros")
     public void macrosTest() throws TSLError {
         String script = Resources.readTSL("rules.at-rules.tsl");
 
@@ -48,8 +44,21 @@ public class TSLMacrosTest {
             lexer.intoParts();
             printParts(lexer);
 
-
+            if (!lexer.getDecoratorTokens().isEmpty()) { // has decorators
+                for (TSLToken decoratorToken : lexer.getDecoratorTokens()) {
+                    TSLDecorator decorator = TSLParser.parseDecorator(decoratorToken);
+                    System.out.println(decorator);
+                }
+            }
         }
+    }
+
+    @Test
+    @DisplayName("should parse macros")
+    public void macroParseTest() throws TSLError {
+        String script = Resources.readTSL("rules.at-rules.tsl");
+        TSLRuleset ruleset = new TSLParser(script).parse();
+        System.out.println("Parsed " + ruleset);
     }
 
     private static void printParts(TSLLexer lexer) {

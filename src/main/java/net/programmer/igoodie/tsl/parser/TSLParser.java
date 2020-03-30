@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.parser;
 
 import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLActionDefinition;
+import net.programmer.igoodie.tsl.definition.TSLDecoratorDefinition;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
 import net.programmer.igoodie.tsl.definition.TSLPredicateDefinition;
 import net.programmer.igoodie.tsl.exception.TSLParsingError;
@@ -19,9 +20,13 @@ import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class TSLParser {
+
+    private static Pattern DECORATOR_PATTERN = Pattern.compile("@((?<name>[^\\s\\(\\)]*)\\((?<args>.*)\\)|([^\\s\\(\\)]*))");
 
     private String tsl;
     private TSLRuleset ruleset;
@@ -99,8 +104,37 @@ public class TSLParser {
 
     /* ---------------------------- */
 
-    public static TSLDecorator parseDecorator(TSLToken decoratorToken) {
-        return null; // TODO
+    public static TSLDecorator parseDecorator(TSLToken decoratorToken) throws TSLSyntaxError {
+        TwitchSpawnLanguage.LOGGER.trace("Parsing decorator with token -> %s", decoratorToken);
+
+        Matcher matcher = DECORATOR_PATTERN.matcher(decoratorToken.getRaw());
+
+        if (!matcher.matches()) {
+            throw new TSLSyntaxError(
+                    "Invalid decorator pattern.",
+                    decoratorToken.getRaw()
+            );
+        }
+
+        String name = matcher.group("args") != null
+                ? matcher.group("name")
+                : matcher.group(1);
+
+        TSLDecoratorDefinition definition = TwitchSpawnLanguage.getDecoratorDefinition(name);
+
+        if (definition == null) {
+            throw new TSLSyntaxError(
+                    String.format("Unknown decorator name -> %s", name),
+                    decoratorToken.getRaw()
+            );
+        }
+
+        String[] args = matcher.group("args") != null
+                ? matcher.group("args").split(",\\s*")
+                : new String[0];
+
+        definition.validateArguments(args);
+        return new TSLDecorator(definition, args);
     }
 
     public static TSLEventNode parseEvent(List<TSLToken> eventTokens,

@@ -6,22 +6,18 @@ import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.List;
 
-public abstract class TSLDecoratorDefinition extends TSLDefinition {
+public abstract class TSLDecoratorDefinition {
+
+    private String name;
 
     public TSLDecoratorDefinition(String name) {
-        super(name);
+        this.name = name;
     }
 
-    @Override
-    public final void validateSyntax(List<TSLToken> tokens, TSLContext context) throws TSLSyntaxError {
-        // TODO
+    public String getName() {
+        return name;
     }
 
-    public abstract void validateParameters(List<String> tokens);
-
-    @Override
-    public boolean satisfies(List<TSLToken> tokens, TSLContext context) {
-        return false;
-    }
+    public abstract void validateArguments(String[] arguments) throws TSLSyntaxError;
 
 }

@@ -1,23 +1,24 @@
-$message This is a message
+$message %[This is a message]%
 
 $randomItemAction
     EITHER
         DROP apple
     OR
         DROP diamond
+    DISPLAYING $message
 
-@decorator1
-@decorator2(deco_param1,deco_param2)
-PRINT
+@my_decorator
+@my_param_decorator(deco_param1,deco_param2)
+PRINT %[1, 2, 3]%
     $message
-    ON Twitch Follow
+    ON Example Event
 
-@decorator1
+@my_decorator
 PRINT
 @decorator2(deco_param) # <- Is an error
     $message
-    ON Twitch Follow
-    WITH foo bar baz
+    ON Example Event
+    WITH numberArgument1 = 5
 
 # TODO: Decorator definitions
 # TODO: Add TSL Action perform listener (pubsub)
