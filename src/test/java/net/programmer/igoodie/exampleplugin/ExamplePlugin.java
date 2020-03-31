@@ -16,12 +16,6 @@ import java.util.stream.Stream;
 
 public class ExamplePlugin {
 
-    public static void main(String[] args) {
-        initialize();
-    }
-
-    /* ---------------------------- */
-
     public static void initialize() {
         try {
             registerDecorators();

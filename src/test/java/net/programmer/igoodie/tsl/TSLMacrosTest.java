@@ -61,23 +61,24 @@ public class TSLMacrosTest {
         String script = Resources.readTSL("rules.at-rules.tsl");
         TSLRuleset ruleset = new TSLParser(script).parse();
 
-        // Try replacing captures and then evaluating them
-        TSLRule firstRule = ruleset.getRules().get(0);
-        System.out.println(firstRule.getTokens());
-        System.out.println(ruleset.replaceCaptures(firstRule.getTokens()));
-        System.out.println(ruleset.replaceCaptures(firstRule.getTokens()).stream()
-                .map(token -> {
-                    try {
-                        token.validate(new TSLContext());
-                    } catch (TSLSyntaxError tslSyntaxError) {
-                        tslSyntaxError.printStackTrace();
-                    }
-                    return token.getValue(new TSLContext());
-                }).collect(Collectors.toList()));
+        TSLEventArguments eventArguments = new TSLEventArguments()
+                .with("actor", "TestBoii");
 
-        TSLContext context = new TSLContext();
-        context.setEventArguments(new TSLEventArguments().with("actor", "TestBoi"));
-        firstRule.process(context);
+        ruleset.dispatch("Example Event", eventArguments);
+
+        // Try replacing captures and then evaluating them
+//        TSLRule firstRule = ruleset.getRules().get(0);
+//        System.out.println(firstRule.getTokens());
+//        System.out.println(ruleset.replaceCaptures(firstRule.getTokens()));
+//        System.out.println(ruleset.replaceCaptures(firstRule.getTokens()).stream()
+//                .map(token -> {
+//                    try {
+//                        token.validate(new TSLContext());
+//                    } catch (TSLSyntaxError tslSyntaxError) {
+//                        tslSyntaxError.printStackTrace();
+//                    }
+//                    return token.getValue(new TSLContext());
+//                }).collect(Collectors.toList()));
     }
 
 }

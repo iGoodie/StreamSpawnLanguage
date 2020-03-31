@@ -7,12 +7,13 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
 import net.programmer.igoodie.tsl.runtime.node.TSLEventNode;
+import net.programmer.igoodie.tsl.runtime.pubsub.TSLPublisher;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.*;
 import java.util.function.Function;
 
-public class TSLRuleset {
+public class TSLRuleset extends TSLPublisher {
 
     private String streamer;
     private List<TSLRule> rules;
@@ -43,6 +44,7 @@ public class TSLRuleset {
     /* ----------------------------------------- RULE-RELATED */
 
     public void addRule(TSLRule rule) {
+        rule.setAssociatedRuleset(this);
         this.rules.add(rule);
     }
 
@@ -98,31 +100,28 @@ public class TSLRuleset {
 
     /* ----------------------------------------- DISPATCHERS */
 
-    public boolean dispatch(String eventName, TSLEventArguments eventArguments) {
+    public void dispatch(String eventName, TSLEventArguments eventArguments) {
         TSLEventDefinition eventDefinition = TwitchSpawnLanguage.getEventDefinition(eventName);
 
         if (eventDefinition == null) {
             throw new IllegalArgumentException("Unknown event name -> " + eventName);
         }
 
-        return dispatch(eventDefinition, eventArguments);
+        dispatch(eventDefinition, eventArguments);
 
     }
 
-    public boolean dispatch(TSLEventDefinition eventDefinition, TSLEventArguments eventArguments) {
+    public void dispatch(TSLEventDefinition eventDefinition, TSLEventArguments eventArguments) {
         TwitchSpawnLanguage.LOGGER.debug("Dispatched event -> %s, args: %s",
                 eventDefinition, eventArguments);
 
-        // TODO: Refactor
-//        TSLEventNode eventNode = this.handlers.get(eventDefinition);
-//
-//        TSLContext context = new TSLContext();
-//        context.setStreamer(streamer);
-////        context.setEventDefinition(eventDefinition); // <- Set by Event Node's process call
-//        context.setEventArguments(eventArguments);
-//
-//        return eventNode.process(context);
-        return false;
+        for (TSLRule rule : rules) {
+            TSLContext context = new TSLContext();
+            context.setStreamer(streamer);
+            context.setAssociatedRule(rule);
+            context.setEventArguments(eventArguments);
+            rule.process(context);
+        }
     }
 
     /* ----------------------------------------- */

@@ -12,6 +12,7 @@ import java.util.List;
 public class TSLRule {
 
     private List<TSLToken> tokens;
+    private TSLRuleset associatedRuleset;
     private TSLEventNode eventNode;
     private List<TSLDecorator> decorators;
 
@@ -22,6 +23,14 @@ public class TSLRule {
     }
 
     /* ------------------------------------------- */
+
+    public void setAssociatedRuleset(TSLRuleset associatedRuleset) {
+        this.associatedRuleset = associatedRuleset;
+    }
+
+    public TSLRuleset getAssociatedRuleset() {
+        return associatedRuleset;
+    }
 
     public List<TSLToken> getTokens() {
         return tokens;
