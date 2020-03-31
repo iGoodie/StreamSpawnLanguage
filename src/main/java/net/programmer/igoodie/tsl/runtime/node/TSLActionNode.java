@@ -9,8 +9,6 @@ import java.util.List;
 
 public final class TSLActionNode extends TSLFlowNode {
 
-    private boolean silent = false;
-
     public TSLActionNode(TSLActionDefinition definition, List<TSLToken> tokens) {
         super(definition, tokens);
     }
@@ -20,25 +18,16 @@ public final class TSLActionNode extends TSLFlowNode {
         return (TSLActionDefinition) definition;
     }
 
-    public void setSilent(boolean silent) {
-        this.silent = silent;
-    }
-
-    public boolean isSilent() {
-        return silent;
-    }
-
     /* -------------------------------- */
-
-    @Override
-    public final TSLFlowNode chain(TSLFlowNode next) {
-        return super.chain(next);
-    }
 
     @Override
     public final boolean process(TSLContext context) {
         TwitchSpawnLanguage.LOGGER.trace("Processing -> %s", tokens);
-        return definition.satisfies(tokens, context);
+        definition.satisfies(tokens, context);
+        System.out.println("Action Arguments: " + context.getActionArguments());
+        System.out.println("Event Arguments: " + context.getEventArguments());
+        return true;
+//        return definition.satisfies(tokens, context);
     }
 
 }

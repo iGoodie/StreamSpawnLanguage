@@ -22,6 +22,7 @@ public class TSLContext {
 
     public TSLContext() {
         this.predicateDefinitions = new LinkedList<>();
+        this.actionArguments = new TSLActionArguments();
     }
 
     /* ----------------------------------------- SETTERS */

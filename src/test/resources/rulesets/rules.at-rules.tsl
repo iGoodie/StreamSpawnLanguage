@@ -1,4 +1,7 @@
-$message %[This is a message]%
+$my_nickname iGoodie
+
+$message This is a message with ${Math.random() > 0.5 ? "multiple" : "tons of"}
+ tokens made for $my_nickname
 
 $randomItemAction
     EITHER
@@ -9,8 +12,7 @@ $randomItemAction
 
 @my_decorator
 @my_param_decorator(@deco_param1,deco_param2)
-PRINT %[1, 2, 3]%
-    $message
+PRINT %[1, 2, 3]% ${1 + 2} $message
     ON Example Event
 
 @my_decorator
@@ -20,6 +22,4 @@ PRINT
     ON Example Event
     WITH numberArgument1 = 5
 
-# TODO: Decorator definitions
 # TODO: Add TSL Action perform listener (pubsub)
-# TODO: Remove notification cb from this lib

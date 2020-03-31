@@ -14,11 +14,8 @@ import java.util.List;
 
 public final class TSLEventNode extends TSLFlowNode {
 
-    private List<TSLFlowNode> childNodes;
-
     public TSLEventNode(TSLEventDefinition definition, List<TSLToken> tokens) {
         super(definition, tokens);
-        this.childNodes = new LinkedList<>();
     }
 
     public TSLEventDefinition getDefinition() {
@@ -27,36 +24,9 @@ public final class TSLEventNode extends TSLFlowNode {
 
     /* -------------------------------- */
 
-    public List<TSLFlowNode> getChildren() {
-        return childNodes;
-    }
-
-    public List<TSLActionNode> getActions() {
-        List<TSLActionNode> actionNodes = new LinkedList<>();
-
-        nodeLoop:
-        for (TSLFlowNode childNode : childNodes) {
-            TSLFlowNode node = childNode;
-
-            while (!(node instanceof TSLActionNode)) {
-                if (node instanceof TSLPredicateNode) {
-                    node = ((TSLPredicateNode) node).getNextNode();
-                } else {
-                    continue nodeLoop;
-                }
-            }
-
-            actionNodes.add((TSLActionNode) node);
-
-        }
-        return actionNodes;
-    }
-
-    /* -------------------------------- */
-
     @Override
     public TSLFlowNode chain(TSLFlowNode next) {
-        childNodes.add(next);
+        this.next = next;
         return next;
     }
 
@@ -68,15 +38,7 @@ public final class TSLEventNode extends TSLFlowNode {
 
         context.setEventDefinition(this.getDefinition());
 
-        Iterator<TSLFlowNode> nodeIterator = childNodes.iterator();
-        boolean success = true;
-
-        while (nodeIterator.hasNext()) {
-            success = nodeIterator.next().process(context);
-            if (success) break; // Stop if handled successfully once
-        }
-
-        return success;
+        return next.process(context);
     }
 
 }

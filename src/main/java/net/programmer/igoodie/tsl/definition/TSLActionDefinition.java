@@ -10,8 +10,6 @@ import java.util.List;
 
 public abstract class TSLActionDefinition extends TSLDefinition {
 
-    protected boolean notifies = true;
-
     public TSLActionDefinition(String name) {
         super(name);
     }
@@ -28,23 +26,12 @@ public abstract class TSLActionDefinition extends TSLDefinition {
      */
     public abstract boolean perform(List<TSLToken> tokens, TSLContext context);
 
-    /**
-     * Display the notification with given display tokens and context
-     *
-     * @param tokens  Tokens to be displayed/notified
-     * @param context Actual execution context
-     * @return Whether displayed notifications successfully or not
-     */
-    public abstract boolean displayNotification(List<TSLToken> tokens, TSLContext context);
-
     @Override
     public final boolean satisfies(List<TSLToken> tokens, TSLContext context) {
-        if (notifies) {
-            List<TSLToken> notificationPart = TSLLexer.notificationPart(tokens);
-            if (notificationPart != null) {
-                TwitchSpawnLanguage.LOGGER.trace("Displaying notification -> %s", notificationPart);
-                displayNotification(notificationPart, context);
-            }
+        List<TSLToken> notificationPart = TSLLexer.notificationPart(tokens);
+        if (notificationPart != null) {
+            TwitchSpawnLanguage.LOGGER.trace("Displaying notification -> %s", notificationPart);
+            context.getActionArguments().put("notification", notificationPart);
         }
 
         // A TSL Action always satisfies the context once it's performed

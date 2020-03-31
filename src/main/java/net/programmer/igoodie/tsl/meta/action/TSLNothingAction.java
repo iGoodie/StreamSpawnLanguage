@@ -23,9 +23,4 @@ public class TSLNothingAction extends TSLActionDefinition {
         return false;
     }
 
-    @Override
-    public boolean displayNotification(List<TSLToken> tokens, TSLContext context) {
-        return false;
-    }
-
 }

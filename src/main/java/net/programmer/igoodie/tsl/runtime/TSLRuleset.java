@@ -62,15 +62,38 @@ public class TSLRuleset {
     }
 
     public int ruleCount() {
-        return this.rules.stream()
-                .map(TSLRule::getEventNode)
-                .map(TSLEventNode::getChildren)
-                .mapToInt(List::size)
-                .sum();
+        return this.rules.size();
     }
 
     public List<TSLToken> getCapture(String name) {
         return captures.get(name);
+    }
+
+    public List<TSLToken> replaceCaptures(List<TSLToken> tokens) throws TSLSyntaxError {
+        List<TSLToken> replaced = new LinkedList<>();
+
+        for (int i = 0; i < tokens.size(); i++) {
+            TSLToken token = tokens.get(i);
+
+            if (token.isCaptureName()) {
+                String captureName = token.getRaw().substring(1);
+                List<TSLToken> capturedSnippet = this.getCapture(captureName);
+
+                if (capturedSnippet == null) {
+                    throw new TSLSyntaxError(
+                            "Capture " + captureName + " is not defined.",
+                            TSLSyntaxError.causedNear(tokens, i)
+                    );
+                }
+
+                replaced.addAll(capturedSnippet);
+
+            } else {
+                replaced.add(token);
+            }
+        }
+
+        return replaced;
     }
 
     /* ----------------------------------------- DISPATCHERS */

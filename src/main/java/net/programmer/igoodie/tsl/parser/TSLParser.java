@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class TSLParser {
 
-    private static Pattern DECORATOR_PATTERN = Pattern.compile("@((?<name>[^\\s\\(\\)]*)\\((?<args>.*)\\)|([^\\s\\(\\)]*))");
+    private static Pattern DECORATOR_PATTERN = Pattern.compile("@((?<name>[^\\s()]*)\\((?<args>.*)\\)|([^\\s()]*))");
 
     private String tsl;
     private TSLRuleset ruleset;
@@ -74,40 +74,6 @@ public class TSLParser {
         return ruleset;
     }
 
-//    private TSLEventNode parseRule(List<TSLToken> tokens) throws TSLSyntaxError {
-//        TwitchSpawnLanguage.LOGGER.debug("Parsing rule -> %s", tokens);
-//
-//        // Lexe tokens into parts
-//        TSLLexer lexer = new TSLLexer(tokens);
-//        lexer.intoParts();
-//
-//        // Create an empty context. It'll be filled as nodes are parsed
-//        TSLContext validationContext = new TSLContext();
-//        validationContext.setStreamer("TestGuy123");
-//        TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
-//
-//        // Parse nodes
-//        TSLEventNode eventNode = parseEvent(lexer.getEventTokens(), validationContext);
-//        TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
-//        TwitchSpawnLanguage.LOGGER.debug("Parsed event -> %s", eventNode.getDefinition().getName());
-//
-//        List<TSLPredicateNode> predicateNodes = new LinkedList<>();
-//        for (List<TSLToken> predicateTokenList : lexer.getPredicateTokens()) {
-//            TSLPredicateNode predicateNode = parsePredicate(predicateTokenList, validationContext);
-//            predicateNodes.add(predicateNode);
-//            TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
-//            TwitchSpawnLanguage.LOGGER.debug("Parsed predicate -> %s", predicateNode.getDefinition().getName());
-//        }
-//
-//        TSLActionNode actionNode = parseAction(lexer.getActionTokens(), validationContext);
-//        TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
-//        TwitchSpawnLanguage.LOGGER.debug("Parsed action -> %s", actionNode.getDefinition().getName());
-//
-//        // Chain all and return
-//        chainAll(eventNode, predicateNodes, actionNode);
-//        return eventNode;
-//    }
-
     /* ---------------------------- */
 
     public static TSLRule parseRule(TSLRuleset ruleset, List<TSLToken> tokens) throws TSLSyntaxError {
@@ -115,12 +81,17 @@ public class TSLParser {
         lexer.intoParts();
 
         if (lexer.isCapture()) {
+            List<TSLToken> replacedTokens = ruleset.replaceCaptures(lexer.getCapturedSnippet());
             TwitchSpawnLanguage.LOGGER.trace("Lexed capture -> %s == %s",
-                    lexer.getCaptureName(), lexer.getCapturedSnippet());
-            ruleset.addCapture(lexer.getCaptureName(), lexer.getCapturedSnippet());
+                    lexer.getCaptureName(), replacedTokens);
+            ruleset.addCapture(lexer.getCaptureName(), replacedTokens);
             return null;
-
         }
+
+        // Replace captures if any, then reset lexer
+        tokens = ruleset.replaceCaptures(tokens);
+        lexer = new TSLLexer(tokens);
+        lexer.intoParts();
 
         TwitchSpawnLanguage.LOGGER.trace("Lexed decorators -> %s",
                 lexer.getDecoratorTokens());
@@ -164,7 +135,7 @@ public class TSLParser {
         TwitchSpawnLanguage.LOGGER.debug("Parsed action -> %s", actionNode.getDefinition().getName());
 
         chainAll(eventNode, predicateNodes, actionNode);
-        return new TSLRule(eventNode, null);
+        return new TSLRule(tokens, eventNode, decorators);
 
     }
 

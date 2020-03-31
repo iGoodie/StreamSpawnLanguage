@@ -25,7 +25,8 @@ public abstract class TSLToken {
     }
 
     public boolean isCaptureName() {
-        return this.getRaw().startsWith(String.valueOf(TSLTokenizer.CAPTURE));
+        return this.getClass() == TSLPlainToken.class
+                && this.getRaw().startsWith(String.valueOf(TSLTokenizer.CAPTURE));
     }
 
     public boolean isDecorator() {

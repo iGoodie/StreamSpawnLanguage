@@ -11,6 +11,7 @@ public abstract class TSLFlowNode {
 
     protected TSLDefinition definition;
     protected List<TSLToken> tokens;
+    protected TSLFlowNode next;
 
     public TSLFlowNode(TSLDefinition definition, List<TSLToken> tokens) {
         this.definition = definition;
@@ -23,6 +24,10 @@ public abstract class TSLFlowNode {
 
     public List<TSLToken> getTokens() {
         return tokens;
+    }
+
+    public TSLFlowNode getNext() {
+        return next;
     }
 
     /* ---------------------------------------- */

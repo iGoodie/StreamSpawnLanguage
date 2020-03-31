@@ -9,8 +9,6 @@ import java.util.List;
 
 public final class TSLPredicateNode extends TSLFlowNode {
 
-    private TSLFlowNode nextNode;
-
     public TSLPredicateNode(TSLPredicateDefinition definition, List<TSLToken> tokens) {
         super(definition, tokens);
     }
@@ -22,15 +20,9 @@ public final class TSLPredicateNode extends TSLFlowNode {
 
     /* -------------------------------- */
 
-    public TSLFlowNode getNextNode() {
-        return nextNode;
-    }
-
-    /* -------------------------------- */
-
     @Override
     public TSLFlowNode chain(TSLFlowNode next) {
-        this.nextNode = next;
+        this.next = next;
         return next;
     }
 
@@ -43,7 +35,7 @@ public final class TSLPredicateNode extends TSLFlowNode {
         context.addPredicateDefinition(definition);
 
         if (definition.satisfies(tokens, context)) {
-            return nextNode.process(context);
+            return next.process(context);
         }
 
         return false;

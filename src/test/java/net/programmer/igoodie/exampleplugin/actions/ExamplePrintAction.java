@@ -38,15 +38,4 @@ public class ExamplePrintAction extends TSLActionDefinition {
         return true;
     }
 
-    @Override
-    public boolean displayNotification(List<TSLToken> tokens, TSLContext context) {
-        String displayThat = tokens.stream()
-                .map(token -> token.getValue(context))
-                .collect(Collectors.joining(" "));
-
-        System.out.println("~~" + displayThat + "~~");
-
-        return true;
-    }
-
 }
