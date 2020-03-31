@@ -22,9 +22,10 @@ public class TSLDecorator {
 
     @Override
     public String toString() {
-        return "TSLDecorator{" +
-                "definition=" + definition.getName() +
-                ", arguments=" + Arrays.toString(arguments) +
-                '}';
+        return String.format("Decorator: @%s%s",
+                definition.getName(),
+                arguments.length == 0
+                        ? ""
+                        : ("(" + String.join(",", arguments)) + ")");
     }
 }

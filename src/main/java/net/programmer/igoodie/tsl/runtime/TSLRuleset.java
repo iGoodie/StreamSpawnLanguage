@@ -3,19 +3,19 @@ package net.programmer.igoodie.tsl.runtime;
 import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
 import net.programmer.igoodie.tsl.exception.TSLError;
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
 import net.programmer.igoodie.tsl.runtime.node.TSLEventNode;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 
 public class TSLRuleset {
 
     private String streamer;
-    private Map<TSLEventDefinition, TSLEventNode> handlers;
+    private List<TSLRule> rules;
     private Map<String, List<TSLToken>> captures;
 
     public TSLRuleset() {
@@ -24,7 +24,7 @@ public class TSLRuleset {
 
     public TSLRuleset(String streamer) {
         this.streamer = streamer;
-        this.handlers = new HashMap<>();
+        this.rules = new ArrayList<>();
         this.captures = new HashMap<>();
     }
 
@@ -36,36 +36,37 @@ public class TSLRuleset {
         return streamer;
     }
 
-    public Map<TSLEventDefinition, TSLEventNode> getHandlers() {
-        return handlers;
+    public List<TSLRule> getRules() {
+        return rules;
     }
 
     /* ----------------------------------------- RULE-RELATED */
 
-    public void addRule(TSLEventNode eventNode) {
-        this.handlers.put(eventNode.getDefinition(), eventNode);
+    public void addRule(TSLRule rule) {
+        this.rules.add(rule);
     }
 
-    public void addCapture(String captureName, List<TSLToken> capturedTokens) throws TSLError {
+    public void addCapture(String captureName, List<TSLToken> capturedTokens) throws TSLSyntaxError {
         if (captures.containsKey(captureName))
-            throw new TSLError(String.format("%s's ruleset already contains capture with name -> %s",
-                    streamer, captureName));
+            throw new TSLSyntaxError(
+                    String.format("%s's ruleset already contains capture with name -> %s",
+                            streamer, captureName));
+
+        this.captures.put(captureName, capturedTokens);
     }
 
     public boolean hasRuleFor(TSLEventDefinition eventDefinition) {
-        return this.handlers.containsKey(eventDefinition);
+        return this.rules.stream()
+                .map(TSLRule::getEventNode)
+                .anyMatch(event -> event.getDefinition() == eventDefinition);
     }
 
     public int ruleCount() {
-        int count = 0;
-        for (TSLEventNode eventNode : handlers.values()) {
-            count += eventNode.getChildren().size();
-        }
-        return count;
-    }
-
-    public TSLEventNode getHandler(TSLEventDefinition eventDefinition) {
-        return this.handlers.get(eventDefinition);
+        return this.rules.stream()
+                .map(TSLRule::getEventNode)
+                .map(TSLEventNode::getChildren)
+                .mapToInt(List::size)
+                .sum();
     }
 
     public List<TSLToken> getCapture(String name) {
@@ -89,22 +90,24 @@ public class TSLRuleset {
         TwitchSpawnLanguage.LOGGER.debug("Dispatched event -> %s, args: %s",
                 eventDefinition, eventArguments);
 
-        TSLEventNode eventNode = this.handlers.get(eventDefinition);
-
-        TSLContext context = new TSLContext();
-        context.setStreamer(streamer);
-//        context.setEventDefinition(eventDefinition); // <- Set by Event Node's process call
-        context.setEventArguments(eventArguments);
-
-        return eventNode.process(context);
+        // TODO: Refactor
+//        TSLEventNode eventNode = this.handlers.get(eventDefinition);
+//
+//        TSLContext context = new TSLContext();
+//        context.setStreamer(streamer);
+////        context.setEventDefinition(eventDefinition); // <- Set by Event Node's process call
+//        context.setEventArguments(eventArguments);
+//
+//        return eventNode.process(context);
+        return false;
     }
 
     /* ----------------------------------------- */
 
     @Override
     public String toString() {
-        return String.format("Streamer:%s => %d rule(s)",
-                streamer, ruleCount());
+        return String.format("Streamer:%s => %d rule(s). %d capture(s)",
+                streamer, this.ruleCount(), this.captures.size());
     }
 
 }

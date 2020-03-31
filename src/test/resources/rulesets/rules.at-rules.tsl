@@ -8,7 +8,7 @@ $randomItemAction
     DISPLAYING $message
 
 @my_decorator
-@my_param_decorator(deco_param1,deco_param2)
+@my_param_decorator(@deco_param1,deco_param2)
 PRINT %[1, 2, 3]%
     $message
     ON Example Event

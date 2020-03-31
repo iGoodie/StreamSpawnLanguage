@@ -26,7 +26,7 @@ public class TSLMacrosTest {
         ExamplePlugin.initialize();
     }
 
-    @Test
+//    @Test
     @DisplayName("should lexe macros")
     public void macrosTest() throws TSLError {
         String script = Resources.readTSL("rules.at-rules.tsl");
@@ -42,7 +42,6 @@ public class TSLMacrosTest {
 
             TSLLexer lexer = new TSLLexer(tokens);
             lexer.intoParts();
-            printParts(lexer);
 
             if (!lexer.getDecoratorTokens().isEmpty()) { // has decorators
                 for (TSLToken decoratorToken : lexer.getDecoratorTokens()) {
@@ -59,18 +58,6 @@ public class TSLMacrosTest {
         String script = Resources.readTSL("rules.at-rules.tsl");
         TSLRuleset ruleset = new TSLParser(script).parse();
         System.out.println("Parsed " + ruleset);
-    }
-
-    private static void printParts(TSLLexer lexer) {
-        if (lexer.isCapture()) {
-            System.out.println("Capture Name: " + lexer.getCaptureName());
-            System.out.println("Captured Snippet: " + lexer.getCapturedSnippet());
-        } else {
-            System.out.println("Decorators: " + lexer.getDecoratorTokens());
-            System.out.println("Action: " + lexer.getActionTokens());
-            System.out.println("Event: " + lexer.getEventTokens());
-            System.out.println("Predicates: " + lexer.getPredicateTokens());
-        }
     }
 
 }

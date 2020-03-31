@@ -5,8 +5,10 @@ import net.programmer.igoodie.tsl.definition.TSLActionDefinition;
 import net.programmer.igoodie.tsl.definition.TSLDecoratorDefinition;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
 import net.programmer.igoodie.tsl.definition.TSLPredicateDefinition;
+import net.programmer.igoodie.tsl.exception.TSLError;
 import net.programmer.igoodie.tsl.exception.TSLParsingError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLDecorator;
@@ -37,7 +39,9 @@ public class TSLParser {
     }
 
     public TSLRuleset parse() throws TSLParsingError {
-        TwitchSpawnLanguage.LOGGER.trace("Parsing tsl script -> %s", tsl);
+        TwitchSpawnLanguage.LOGGER.trace("-----------------------------------------");
+        TwitchSpawnLanguage.LOGGER.trace("Parsing TSL script ->\n%s", tsl);
+        TwitchSpawnLanguage.LOGGER.trace("-----------------------------------------");
 
         TSLTokenizer tokenizer = new TSLTokenizer(tsl);
         List<TSLSyntaxError> syntaxErrors = new LinkedList<>();
@@ -51,9 +55,12 @@ public class TSLParser {
         for (int i = 0; i < tokenizer.ruleCount(); i++) {
             try {
                 List<TSLToken> tokens = tokenizer.intoTokens(i);
-                TSLEventNode eventNode = parseRule(tokens);
-                ruleset.addRule(eventNode);
+                TwitchSpawnLanguage.LOGGER.trace("Parsing rule -> %s", tokens);
 
+                TSLRule rule = parseRule(ruleset, tokens);
+                if (rule != null) ruleset.addRule(rule);
+
+                TwitchSpawnLanguage.LOGGER.trace("-----------------------------------------");
             } catch (TSLSyntaxError syntaxError) {
                 syntaxErrors.add(syntaxError);
             }
@@ -63,17 +70,68 @@ public class TSLParser {
             throw new TSLParsingError(syntaxErrors);
         }
 
-        TwitchSpawnLanguage.LOGGER.debug("Parsed ruleset with %d rule(s)", tokenizer.ruleCount());
-
+        TwitchSpawnLanguage.LOGGER.debug("Parsed ruleset with %d rule(s)", ruleset.ruleCount());
         return ruleset;
     }
 
-    private TSLEventNode parseRule(List<TSLToken> tokens) throws TSLSyntaxError {
-        TwitchSpawnLanguage.LOGGER.debug("Parsing rule -> %s", tokens);
+//    private TSLEventNode parseRule(List<TSLToken> tokens) throws TSLSyntaxError {
+//        TwitchSpawnLanguage.LOGGER.debug("Parsing rule -> %s", tokens);
+//
+//        // Lexe tokens into parts
+//        TSLLexer lexer = new TSLLexer(tokens);
+//        lexer.intoParts();
+//
+//        // Create an empty context. It'll be filled as nodes are parsed
+//        TSLContext validationContext = new TSLContext();
+//        validationContext.setStreamer("TestGuy123");
+//        TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
+//
+//        // Parse nodes
+//        TSLEventNode eventNode = parseEvent(lexer.getEventTokens(), validationContext);
+//        TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
+//        TwitchSpawnLanguage.LOGGER.debug("Parsed event -> %s", eventNode.getDefinition().getName());
+//
+//        List<TSLPredicateNode> predicateNodes = new LinkedList<>();
+//        for (List<TSLToken> predicateTokenList : lexer.getPredicateTokens()) {
+//            TSLPredicateNode predicateNode = parsePredicate(predicateTokenList, validationContext);
+//            predicateNodes.add(predicateNode);
+//            TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
+//            TwitchSpawnLanguage.LOGGER.debug("Parsed predicate -> %s", predicateNode.getDefinition().getName());
+//        }
+//
+//        TSLActionNode actionNode = parseAction(lexer.getActionTokens(), validationContext);
+//        TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
+//        TwitchSpawnLanguage.LOGGER.debug("Parsed action -> %s", actionNode.getDefinition().getName());
+//
+//        // Chain all and return
+//        chainAll(eventNode, predicateNodes, actionNode);
+//        return eventNode;
+//    }
 
-        // Lexe tokens into parts
+    /* ---------------------------- */
+
+    public static TSLRule parseRule(TSLRuleset ruleset, List<TSLToken> tokens) throws TSLSyntaxError {
         TSLLexer lexer = new TSLLexer(tokens);
         lexer.intoParts();
+
+        if (lexer.isCapture()) {
+            TwitchSpawnLanguage.LOGGER.trace("Lexed capture -> %s == %s",
+                    lexer.getCaptureName(), lexer.getCapturedSnippet());
+            ruleset.addCapture(lexer.getCaptureName(), lexer.getCapturedSnippet());
+            return null;
+
+        }
+
+        TwitchSpawnLanguage.LOGGER.trace("Lexed decorators -> %s",
+                lexer.getDecoratorTokens());
+        TwitchSpawnLanguage.LOGGER.trace("Lexed action part -> %s",
+                lexer.getActionTokens());
+        TwitchSpawnLanguage.LOGGER.trace("Lexed event part -> %s",
+                lexer.getEventTokens());
+        for (List<TSLToken> predicateTokens : lexer.getPredicateTokens()) {
+            TwitchSpawnLanguage.LOGGER.trace("Lexed predicate part -> %s",
+                    predicateTokens);
+        }
 
         // Create an empty context. It'll be filled as nodes are parsed
         TSLContext validationContext = new TSLContext();
@@ -81,6 +139,14 @@ public class TSLParser {
         TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
 
         // Parse nodes
+        List<TSLDecorator> decorators = new LinkedList<>();
+        for (TSLToken decoratorToken : lexer.getDecoratorTokens()) {
+            TSLDecorator decorator = parseDecorator(decoratorToken);
+            decorators.add(decorator);
+            TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
+            TwitchSpawnLanguage.LOGGER.debug("Parsed decorator -> %s", decorator);
+        }
+
         TSLEventNode eventNode = parseEvent(lexer.getEventTokens(), validationContext);
         TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
         TwitchSpawnLanguage.LOGGER.debug("Parsed event -> %s", eventNode.getDefinition().getName());
@@ -97,12 +163,10 @@ public class TSLParser {
         TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
         TwitchSpawnLanguage.LOGGER.debug("Parsed action -> %s", actionNode.getDefinition().getName());
 
-        // Chain all and return
         chainAll(eventNode, predicateNodes, actionNode);
-        return eventNode;
-    }
+        return new TSLRule(eventNode, null);
 
-    /* ---------------------------- */
+    }
 
     public static TSLDecorator parseDecorator(TSLToken decoratorToken) throws TSLSyntaxError {
         TwitchSpawnLanguage.LOGGER.trace("Parsing decorator with token -> %s", decoratorToken);

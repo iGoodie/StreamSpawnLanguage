@@ -2,17 +2,19 @@ package net.programmer.igoodie.tsl.runtime;
 
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLDecorator;
+import net.programmer.igoodie.tsl.runtime.node.TSLEventNode;
 import net.programmer.igoodie.tsl.runtime.node.TSLFlowNode;
 
 import java.util.List;
 
 public class TSLRule {
 
-    private TSLFlowNode headFlowNode;
+    private TSLEventNode eventNode;
     private List<TSLDecorator> decorators;
 
-    public TSLRule(TSLFlowNode headFlowNode, List<TSLDecorator> decorators) {
-
+    public TSLRule(TSLEventNode eventNode, List<TSLDecorator> decorators) {
+        this.eventNode = eventNode;
+        this.decorators = decorators;
     }
 
     /* ------------------------------------------- */
@@ -28,9 +30,13 @@ public class TSLRule {
                 .orElse(null);
     }
 
+    public TSLEventNode getEventNode() {
+        return eventNode;
+    }
+
     /* ------------------------------------------- */
 
-    public void perform(TSLContext context) {
+    public void apply(TSLContext context) {
         context.setAssociatedRule(this);
         // TODO
         System.out.println("TODO: TSLRule:perform(context)");
