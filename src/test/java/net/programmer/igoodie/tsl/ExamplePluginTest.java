@@ -14,7 +14,7 @@ public class ExamplePluginTest {
 
     @BeforeAll
     public static void initializeExamplePlugin() {
-        TwitchSpawnLanguage.bootstrap();
+        StreamSpawnLanguage.bootstrap();
         ExamplePlugin.initialize();
     }
 
@@ -30,7 +30,7 @@ public class ExamplePluginTest {
                 .with("numberArgument1", 1)
                 .with("numberArgument2", 2);
 
-        ruleset.dispatch(TwitchSpawnLanguage.getEventDefinition("Example Event"), eventArguments);
+        ruleset.dispatch(StreamSpawnLanguage.getEventDefinition("Example Event"), eventArguments);
     }
 
 }

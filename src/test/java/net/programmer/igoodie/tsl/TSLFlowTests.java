@@ -17,12 +17,12 @@ import javax.script.*;
 public class TSLFlowTests {
 
     @BeforeAll
-    public static void bootstrapTwitchSpawnLanguage() {
-        TwitchSpawnLanguage.bootstrap();
+    public static void bootstrap() {
+        StreamSpawnLanguage.bootstrap();
 
         try {
-            TwitchSpawnLanguage.registerEventDefinition(TSLTestEvent.INSTANCE);
-            TwitchSpawnLanguage.registerActionDefinition(TSLPrintAction.INSTANCE);
+            StreamSpawnLanguage.registerEventDefinition(TSLTestEvent.INSTANCE);
+            StreamSpawnLanguage.registerActionDefinition(TSLPrintAction.INSTANCE);
 
         } catch (TSLPluginError tslPluginError) {
             tslPluginError.printStackTrace();

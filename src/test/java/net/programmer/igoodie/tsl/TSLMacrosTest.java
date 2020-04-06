@@ -2,13 +2,10 @@ package net.programmer.igoodie.tsl;
 
 import net.programmer.igoodie.exampleplugin.ExamplePlugin;
 import net.programmer.igoodie.tsl.exception.TSLError;
-import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.TSLTokenizer;
-import net.programmer.igoodie.tsl.runtime.TSLRule;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLDecorator;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
@@ -17,15 +14,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TSLMacrosTest {
 
     @BeforeAll
-    public static void bootstrapTwitchSpawnLanguage() {
-        TwitchSpawnLanguage.bootstrap();
+    public static void bootstrap() {
+        StreamSpawnLanguage.bootstrap();
         ExamplePlugin.initialize();
     }
 

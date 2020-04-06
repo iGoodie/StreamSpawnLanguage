@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.pubsub;
 
-import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
+import net.programmer.igoodie.tsl.StreamSpawnLanguage;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.node.TSLActionNode;
 
@@ -17,7 +17,7 @@ public class TSLPublisher {
 
     public void publishAction(TSLContext context, TSLActionNode action) {
         for (TSLListener listener : listeners) {
-        TwitchSpawnLanguage.LOGGER.trace("Publishing action to -> %s", listener);
+        StreamSpawnLanguage.LOGGER.trace("Publishing action to -> %s", listener);
             listener.onAction(context, action);
         }
     }

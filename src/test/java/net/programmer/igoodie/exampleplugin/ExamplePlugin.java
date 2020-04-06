@@ -8,7 +8,7 @@ import net.programmer.igoodie.exampleplugin.lambda.Number2ToNumberFunction;
 import net.programmer.igoodie.exampleplugin.lambda.Number3ToNumberFunction;
 import net.programmer.igoodie.exampleplugin.lambda.NumberNToNumberFunction;
 import net.programmer.igoodie.exampleplugin.predicates.ExampleIfPredicate;
-import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
+import net.programmer.igoodie.tsl.StreamSpawnLanguage;
 import net.programmer.igoodie.tsl.exception.TSLPluginError;
 import net.programmer.igoodie.tsl.runtime.context.TSLExpressionBindings;
 
@@ -32,21 +32,21 @@ public class ExamplePlugin {
     }
 
     public static void registerDecorators() throws TSLPluginError {
-        TwitchSpawnLanguage.registerDecoratorDefinition(new MyDecorator());
-        TwitchSpawnLanguage.registerDecoratorDefinition(new MyParameterDecorator());
+        StreamSpawnLanguage.registerDecoratorDefinition(new MyDecorator());
+        StreamSpawnLanguage.registerDecoratorDefinition(new MyParameterDecorator());
     }
 
     public static void registerEvents() throws TSLPluginError {
-        TwitchSpawnLanguage.registerEventDefinition(new ExampleEvent());
+        StreamSpawnLanguage.registerEventDefinition(new ExampleEvent());
     }
 
     public static void registerPredicates() throws TSLPluginError {
-        TwitchSpawnLanguage.registerPredicateDefinition(new ExampleIfPredicate());
+        StreamSpawnLanguage.registerPredicateDefinition(new ExampleIfPredicate());
 
     }
 
     public static void registerActions() throws TSLPluginError {
-        TwitchSpawnLanguage.registerActionDefinition(new ExamplePrintAction());
+        StreamSpawnLanguage.registerActionDefinition(new ExamplePrintAction());
     }
 
     public static void registerExpressionBindingProviders() throws TSLPluginError {

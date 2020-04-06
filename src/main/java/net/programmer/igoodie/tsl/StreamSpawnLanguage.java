@@ -13,7 +13,7 @@ import net.programmer.igoodie.tsl.util.log.TSLLogger;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TwitchSpawnLanguage {
+public class StreamSpawnLanguage {
 
     public static TSLLogger LOGGER = new TSLLogger().setLogLevel(TSLLogLevel.ALL);
 
@@ -29,10 +29,10 @@ public class TwitchSpawnLanguage {
         decorators = new HashMap<>();
 
         try {
-            LOGGER.info("Bootstrapping TwitchSpawn Language...");
+            LOGGER.info("Bootstrapping StreamSpawnLanguage...");
             registerPredicateDefinition(new TSLWithPredicate());
             registerActionDefinition(new TSLNothingAction());
-            LOGGER.info("TwitchSpawn Language bootstrapped successfully!");
+            LOGGER.info("StreamSpawnLanguage bootstrapped successfully!");
 
         } catch (TSLPluginError ignored) {
             throw new InternalError(); // <-- This shall never be thrown
@@ -55,7 +55,7 @@ public class TwitchSpawnLanguage {
             throw new TSLPluginError("Unable to create TSL Event Definition as it was already declared");
 
         events.put(event.getName().toUpperCase(), event);
-        TwitchSpawnLanguage.LOGGER.info("Registered event definition -> %s", event.getName());
+        StreamSpawnLanguage.LOGGER.info("Registered event definition -> %s", event.getName());
     }
 
     public static void registerPredicateDefinition(TSLPredicateDefinition predicate) throws TSLPluginError {
@@ -65,7 +65,7 @@ public class TwitchSpawnLanguage {
             throw new TSLPluginError("Unable to create TSL Predicate Definition as it was already declared");
 
         predicates.put(predicate.getName().toUpperCase(), predicate);
-        TwitchSpawnLanguage.LOGGER.info("Registered predicate definition -> %s", predicate.getName());
+        StreamSpawnLanguage.LOGGER.info("Registered predicate definition -> %s", predicate.getName());
     }
 
     public static void registerActionDefinition(TSLActionDefinition action) throws TSLPluginError {
@@ -75,7 +75,7 @@ public class TwitchSpawnLanguage {
             throw new TSLPluginError("Unable to create TSL Action Definition as it was already declared");
 
         actions.put(action.getName().toUpperCase(), action);
-        TwitchSpawnLanguage.LOGGER.info("Registered action definition -> %s", action.getName());
+        StreamSpawnLanguage.LOGGER.info("Registered action definition -> %s", action.getName());
     }
 
     public static void registerDecoratorDefinition(TSLDecoratorDefinition decorator) throws TSLPluginError {
@@ -85,7 +85,7 @@ public class TwitchSpawnLanguage {
             throw new TSLPluginError("Unable to create TSL Decorator Definition as it was already declared");
 
         decorators.put(decorator.getName().toLowerCase(), decorator);
-        TwitchSpawnLanguage.LOGGER.info("Registered decorator definition -> %s", decorator.getName());
+        StreamSpawnLanguage.LOGGER.info("Registered decorator definition -> %s", decorator.getName());
     }
 
     /* ----------------------------- ACCESSORS */

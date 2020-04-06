@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 public class TSLPluginTests {
 
     @BeforeAll
-    public static void bootstrapTwitchSpawnLanguage() {
-        TwitchSpawnLanguage.bootstrap();
+    public static void bootstrap() {
+        StreamSpawnLanguage.bootstrap();
     }
 
     @Test
@@ -22,9 +22,9 @@ public class TSLPluginTests {
         TSLTestEvent definition3 = new TSLTestEvent();
 
         Assertions.assertThrows(TSLPluginError.class, () -> {
-            TwitchSpawnLanguage.registerEventDefinition(definition1);
-            TwitchSpawnLanguage.registerEventDefinition(definition2);
-            TwitchSpawnLanguage.registerEventDefinition(definition3);
+            StreamSpawnLanguage.registerEventDefinition(definition1);
+            StreamSpawnLanguage.registerEventDefinition(definition2);
+            StreamSpawnLanguage.registerEventDefinition(definition3);
         });
     }
 

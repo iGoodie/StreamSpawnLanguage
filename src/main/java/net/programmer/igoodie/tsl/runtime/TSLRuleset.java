@@ -1,17 +1,14 @@
 package net.programmer.igoodie.tsl.runtime;
 
-import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
+import net.programmer.igoodie.tsl.StreamSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
-import net.programmer.igoodie.tsl.exception.TSLError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
-import net.programmer.igoodie.tsl.runtime.node.TSLEventNode;
 import net.programmer.igoodie.tsl.runtime.pubsub.TSLPublisher;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
 import java.util.*;
-import java.util.function.Function;
 
 public class TSLRuleset extends TSLPublisher {
 
@@ -101,7 +98,7 @@ public class TSLRuleset extends TSLPublisher {
     /* ----------------------------------------- DISPATCHERS */
 
     public void dispatch(String eventName, TSLEventArguments eventArguments) {
-        TSLEventDefinition eventDefinition = TwitchSpawnLanguage.getEventDefinition(eventName);
+        TSLEventDefinition eventDefinition = StreamSpawnLanguage.getEventDefinition(eventName);
 
         if (eventDefinition == null) {
             throw new IllegalArgumentException("Unknown event name -> " + eventName);
@@ -112,7 +109,7 @@ public class TSLRuleset extends TSLPublisher {
     }
 
     public void dispatch(TSLEventDefinition eventDefinition, TSLEventArguments eventArguments) {
-        TwitchSpawnLanguage.LOGGER.debug("Dispatched event -> %s, args: %s",
+        StreamSpawnLanguage.LOGGER.debug("Dispatched event -> %s, args: %s",
                 eventDefinition, eventArguments);
 
         for (TSLRule rule : rules) {

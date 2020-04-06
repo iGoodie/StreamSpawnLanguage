@@ -3,6 +3,8 @@ $my_nickname iGoodie
 $message This is a message with ${Math.random() > 0.5 ? "multiple" : "tons of"}
  tokens made for $my_nickname
 
+$whole_action PRINT whole action ${"considering"+" concat "+ Math.random()}
+
 $randomItemAction
     EITHER
         DROP apple
@@ -14,6 +16,11 @@ $randomItemAction
 @my_param_decorator(@deco_param1,deco_param2)
 PRINT %[1, 2, 3]% ${1 + 2} $message
     ON Example Event
+
+@my_decorator
+$whole_action
+    ON Example Event
+    WITH numberArgument1 = 5
 
 @my_decorator
 PRINT

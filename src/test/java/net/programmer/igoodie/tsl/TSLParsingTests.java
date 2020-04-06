@@ -8,28 +8,22 @@ import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.runtime.TSLRuleset;
-import net.programmer.igoodie.tsl.runtime.context.TSLActionArguments;
-import net.programmer.igoodie.tsl.runtime.context.TSLContext;
-import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
-import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
-import net.programmer.igoodie.tsl.runtime.token.TSLTokenGroup;
 import net.programmer.igoodie.tsl.util.Resources;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.List;
 
 public class TSLParsingTests {
 
     @BeforeAll
-    public static void bootstrapTwitchSpawnLanguage() {
-        TwitchSpawnLanguage.bootstrap();
+    public static void bootstrap() {
+        StreamSpawnLanguage.bootstrap();
 
         try {
-            TwitchSpawnLanguage.registerEventDefinition(TSLTestEvent.INSTANCE);
+            StreamSpawnLanguage.registerEventDefinition(TSLTestEvent.INSTANCE);
 
         } catch (TSLPluginError tslPluginError) {
             tslPluginError.printStackTrace();

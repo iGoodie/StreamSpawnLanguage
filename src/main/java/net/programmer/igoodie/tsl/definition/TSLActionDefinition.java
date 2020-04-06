@@ -1,7 +1,5 @@
 package net.programmer.igoodie.tsl.definition;
 
-import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
-import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.runtime.context.TSLActionArguments;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;

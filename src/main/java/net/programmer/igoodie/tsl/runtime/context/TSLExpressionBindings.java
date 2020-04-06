@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.runtime.context;
 
-import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
+import net.programmer.igoodie.tsl.StreamSpawnLanguage;
 import net.programmer.igoodie.tsl.exception.TSLPluginError;
 import net.programmer.igoodie.tsl.lambda.TSLBindingProvider;
 import net.programmer.igoodie.tsl.lambda.TSLStringProvider;
@@ -141,11 +141,11 @@ public class TSLExpressionBindings implements Bindings {
         }
 
         BINDING_PROVIDERS.put(name, provider);
-        TwitchSpawnLanguage.LOGGER.info("Registered binding provider -> %s", name);
+        StreamSpawnLanguage.LOGGER.info("Registered binding provider -> %s", name);
     }
 
     public static void updateBinding(TSLExpressionBindings bindings) {
-        TwitchSpawnLanguage.LOGGER.trace("Updating expression bindings");
+        StreamSpawnLanguage.LOGGER.trace("Updating expression bindings");
 
         BINDING_PROVIDERS.forEach((name, provider)
                 -> bindings.put(name, provider.provideBind()));

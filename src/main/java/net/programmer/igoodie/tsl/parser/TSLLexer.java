@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.parser;
 
-import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
+import net.programmer.igoodie.tsl.StreamSpawnLanguage;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.runtime.token.TSLPlainToken;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
@@ -104,7 +104,7 @@ public class TSLLexer {
         for (int i = beginningOfEventPart; i < tokens.size(); i++) {
             TSLToken token = tokens.get(i);
 
-            if (TwitchSpawnLanguage.getPredicateDefinition(token.getRaw()) != null) {
+            if (StreamSpawnLanguage.getPredicateDefinition(token.getRaw()) != null) {
                 pushPart();
                 accumulator.clear();
 

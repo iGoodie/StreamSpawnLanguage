@@ -1,15 +1,12 @@
 package net.programmer.igoodie.tsl.runtime.node;
 
-import net.programmer.igoodie.tsl.TwitchSpawnLanguage;
+import net.programmer.igoodie.tsl.StreamSpawnLanguage;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
-import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
 import net.programmer.igoodie.tsl.runtime.context.TSLExpressionBindings;
 import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
 
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 public final class TSLEventNode extends TSLFlowNode {
@@ -32,7 +29,7 @@ public final class TSLEventNode extends TSLFlowNode {
 
     @Override
     public boolean process(TSLContext context) {
-        TwitchSpawnLanguage.LOGGER.trace("Processing -> %s", tokens);
+        StreamSpawnLanguage.LOGGER.trace("Processing -> %s", tokens);
 
         TSLExpressionBindings.updateBinding(TSLExpression.BINDINGS);
 
