@@ -25,6 +25,8 @@ public final class TSLActionNode extends TSLFlowNode {
     public final boolean process(TSLContext context) {
         StreamSpawnLanguage.LOGGER.trace("Processing -> %s", tokens);
 
+        context.setActionDefinition(getDefinition());
+
         List<TSLToken> notificationPart = TSLLexer.notificationPart(tokens);
         if (notificationPart != null) {
             StreamSpawnLanguage.LOGGER.trace("Lexed notification -> %s", notificationPart);
