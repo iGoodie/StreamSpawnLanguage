@@ -79,7 +79,7 @@ public class TSLParser {
         TSLLexer lexer = new TSLLexer(tokens);
         lexer.intoParts();
 
-        if (lexer.isCapture()) {
+        if (lexer.isCaptureDeclaration()) {
             List<TSLToken> replacedTokens = ruleset.replaceCaptures(lexer.getCapturedSnippet());
             StreamSpawnLanguage.LOGGER.trace("Lexed capture -> %s == %s",
                     lexer.getCaptureName(), replacedTokens);

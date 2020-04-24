@@ -21,7 +21,8 @@ public class TSLTokenizer {
     public static final char GROUPING = '%';
     public static final char ESCAPE = '\\';
     public static final char DECORATOR = '@';
-    public static final char CAPTURE = '$';
+    public static final String CAPTURE_DECLARE = "=$";
+    public static final char CAPTURE_FETCH = '$';
 
     private String script;
     private List<String> rules;

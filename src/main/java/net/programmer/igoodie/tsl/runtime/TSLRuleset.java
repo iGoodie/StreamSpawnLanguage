@@ -74,7 +74,7 @@ public class TSLRuleset extends TSLPublisher {
         for (int i = 0; i < tokens.size(); i++) {
             TSLToken token = tokens.get(i);
 
-            if (token.isCaptureName()) {
+            if (token.isCaptureFetch()) {
                 String captureName = token.getRaw().substring(1);
                 List<TSLToken> capturedSnippet = this.getCapture(captureName);
 

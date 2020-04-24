@@ -24,9 +24,14 @@ public abstract class TSLToken {
         return this.getClass() == TSLExpression.class;
     }
 
-    public boolean isCaptureName() {
+    public boolean isCaptureDeclaration() {
         return this.getClass() == TSLPlainToken.class
-                && this.getRaw().startsWith(String.valueOf(TSLTokenizer.CAPTURE));
+                && this.getRaw().startsWith(TSLTokenizer.CAPTURE_DECLARE);
+    }
+
+    public boolean isCaptureFetch() {
+        return this.getClass() == TSLPlainToken.class
+                && this.getRaw().startsWith(String.valueOf(TSLTokenizer.CAPTURE_FETCH));
     }
 
     public boolean isDecorator() {

@@ -1,5 +1,7 @@
+=$secondCall Second Call ${multiply(5, 10)}
+
 PRINT
   First Call: ${sum(currentUNIX, 10, numberArgument2)}
-  Second Call ${multiply(5, 10)}
+  $secondCall
  ON Example Event
  IF ${numberArgument1 == 1}

@@ -34,8 +34,12 @@ public class TSLLexer {
         this.predicateTokens = new LinkedList<>();
     }
 
-    public boolean isCapture() {
-        return tokens.get(0).isCaptureName();
+    public boolean isCaptureDeclaration() {
+        return tokens.get(0).isCaptureDeclaration();
+    }
+
+    public boolean isCaptureFetch() {
+        return tokens.get(0).isCaptureFetch();
     }
 
     /* ---------------------------------------------- */
@@ -72,8 +76,9 @@ public class TSLLexer {
     /* ---------------------------------------------- */
 
     public void intoParts() throws TSLSyntaxError {
-        if (isCapture()) {
-            captureName = tokens.get(0).getRaw().substring(1);
+        if (isCaptureDeclaration()) {
+            captureName = tokens.get(0).getRaw()
+                    .substring(TSLTokenizer.CAPTURE_DECLARE.length());
             capturedSnippet = extractTokens(1, tokens.size() - 1);
             if (captureName.isEmpty()) {
                 throw new TSLSyntaxError("Capture missing a name");
@@ -81,6 +86,7 @@ public class TSLLexer {
             if (capturedSnippet.isEmpty()) {
                 throw new TSLSyntaxError("Captures cannot be empty");
             }
+            StreamSpawnLanguage.LOGGER.debug("Capturing %s -> %s", captureName, capturedSnippet);
             return;
         }
 
