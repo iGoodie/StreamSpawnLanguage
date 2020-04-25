@@ -15,12 +15,16 @@ public class TSLNothingAction extends TSLActionDefinition {
 
     @Override
     public void validateSyntax(List<TSLToken> tokens, TSLContext context) throws TSLSyntaxError {
-
+        if (tokens.size() != 1) {
+            throw new TSLSyntaxError(
+                    "NOTHING action does not accept any parameters"
+            );
+        }
     }
 
     @Override
     public boolean perform(List<TSLToken> tokens, TSLContext context) {
-        return false;
+        return true;
     }
 
 }

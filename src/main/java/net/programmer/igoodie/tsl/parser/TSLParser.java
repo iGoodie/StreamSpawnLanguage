@@ -60,6 +60,7 @@ public class TSLParser {
                 if (rule != null) ruleset.addRule(rule);
 
                 StreamSpawnLanguage.LOGGER.trace("-----------------------------------------");
+
             } catch (TSLSyntaxError syntaxError) {
                 syntaxErrors.add(syntaxError);
             }
@@ -283,7 +284,8 @@ public class TSLParser {
             }
         }
 
-        actionDefinition.validateSyntax(actionTokens, validationContext);
+        // Validate ignoring the DISPLAYING part
+        actionDefinition.validateSyntax(TSLLexer.actionPart(actionTokens), validationContext);
 
         return new TSLActionNode(actionDefinition, actionTokens);
     }

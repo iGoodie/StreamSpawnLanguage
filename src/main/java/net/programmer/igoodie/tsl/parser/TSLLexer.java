@@ -158,8 +158,7 @@ public class TSLLexer {
         List<TSLToken> actionPart = new LinkedList<>();
 
         // Does not include the action name
-        for (int i = 1; i < actionTokens.size(); i++) {
-            TSLToken actionToken = actionTokens.get(i);
+        for (TSLToken actionToken : actionTokens) {
             if (actionToken.getRaw().equalsIgnoreCase(until))
                 break;
             actionPart.add(actionToken);

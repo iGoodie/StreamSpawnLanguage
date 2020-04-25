@@ -5,6 +5,7 @@ import net.programmer.igoodie.tsl.definition.TSLDecoratorDefinition;
 import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
 import net.programmer.igoodie.tsl.definition.TSLPredicateDefinition;
 import net.programmer.igoodie.tsl.exception.TSLPluginError;
+import net.programmer.igoodie.tsl.meta.action.TSLEitherAction;
 import net.programmer.igoodie.tsl.meta.action.TSLNothingAction;
 import net.programmer.igoodie.tsl.meta.predicate.TSLWithPredicate;
 import net.programmer.igoodie.tsl.util.log.TSLLogLevel;
@@ -32,6 +33,7 @@ public class StreamSpawnLanguage {
             LOGGER.info("Bootstrapping StreamSpawnLanguage...");
             registerPredicateDefinition(new TSLWithPredicate());
             registerActionDefinition(new TSLNothingAction());
+            registerActionDefinition(new TSLEitherAction());
             LOGGER.info("StreamSpawnLanguage bootstrapped successfully!");
 
         } catch (TSLPluginError ignored) {

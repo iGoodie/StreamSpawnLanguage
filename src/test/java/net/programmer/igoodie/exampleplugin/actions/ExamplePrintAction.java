@@ -33,7 +33,7 @@ public class ExamplePrintAction extends TSLActionDefinition {
                 .map(token -> token.calculateValue(context))
                 .collect(Collectors.joining(" "));
 
-        System.out.println(">> " + printThis + "\n");
+        System.out.println(">> " + printThis);
 
         return true;
     }

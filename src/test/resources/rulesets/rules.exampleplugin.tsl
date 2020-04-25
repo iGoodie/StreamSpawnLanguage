@@ -16,3 +16,14 @@ PRINT
  WITH ${numberArgument1 == 1}
  WITH numberArgument1 IN RANGE [-10,100]
  WITH actor NOT = iGoodie
+
+EITHER
+ PRINT foo
+ OR
+ PRINT bar
+ OR
+ PRINT baz
+ ON Example Event
+
+NOTHING DISPLAYING foo bar baz
+ ON Example Event
