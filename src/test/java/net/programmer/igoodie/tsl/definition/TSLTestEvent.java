@@ -14,7 +14,7 @@ public final class TSLTestEvent extends TSLEventDefinition {
     }
 
     @Override
-    public TSLEventArguments getSampleArguments() {
+    public TSLEventArguments getShape() {
         return new TSLEventArguments()
                 .with("actor", "iGoodie")
                 .with("viewers", 12345)

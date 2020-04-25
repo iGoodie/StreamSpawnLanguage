@@ -23,7 +23,7 @@ public class ExampleIfPredicate extends TSLPredicateDefinition {
         }
 
         TSLToken predicateExpression = tokens.get(1);
-        String value = predicateExpression.getValue(context);
+        String value = predicateExpression.calculateValue(context);
 
         if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) {
             throw new TSLSyntaxError(
@@ -35,7 +35,7 @@ public class ExampleIfPredicate extends TSLPredicateDefinition {
 
     @Override
     public boolean satisfies(List<TSLToken> tokens, TSLContext context) {
-        return tokens.get(1).getValue(context).equalsIgnoreCase("true");
+        return tokens.get(1).calculateValue(context).equalsIgnoreCase("true");
     }
 
 }

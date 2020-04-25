@@ -50,7 +50,7 @@ public class TSLExpression extends TSLToken {
     }
 
     @Override
-    public String getValue(TSLContext context) {
+    public String calculateValue(TSLContext context) {
         if (!validated) {
             throw new InternalError("Evaluator called before validation!");
         }

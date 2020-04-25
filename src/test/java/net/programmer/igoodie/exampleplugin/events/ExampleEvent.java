@@ -10,8 +10,9 @@ public class ExampleEvent extends TSLEventDefinition {
     }
 
     @Override
-    public TSLEventArguments getSampleArguments() {
+    public TSLEventArguments getShape() {
         return new TSLEventArguments()
+                .with("actor", "Testerinoo")
                 .with("numberArgument1", 1)
                 .with("numberArgument2", 2);
     }

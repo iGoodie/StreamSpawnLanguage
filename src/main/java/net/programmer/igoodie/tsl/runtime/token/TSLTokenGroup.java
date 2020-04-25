@@ -42,14 +42,14 @@ public class TSLTokenGroup extends TSLToken {
     }
 
     @Override
-    public String getValue(TSLContext context) {
+    public String calculateValue(TSLContext context) {
         boolean includeDelimiter = true;
 
         StringBuilder value = new StringBuilder();
 
         for (TSLToken token : tokens) {
             if (token.isExpression()) {
-                value.append(token.getValue(context));
+                value.append(token.calculateValue(context));
                 includeDelimiter = false;
                 continue;
             }
@@ -57,7 +57,7 @@ public class TSLTokenGroup extends TSLToken {
             if (includeDelimiter && value.length() != 0)
                 value.append(TSLTokenizer.SPACE);
 
-            value.append(token.getValue(context));
+            value.append(token.calculateValue(context));
 
             includeDelimiter = true;
         }

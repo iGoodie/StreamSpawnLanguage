@@ -41,7 +41,7 @@ public abstract class TSLDefinition {
      */
     public abstract boolean satisfies(List<TSLToken> tokens, TSLContext context);
 
-    public abstract TSLArguments getSampleArguments();
+    public abstract TSLArguments getShape();
 
     /* ----------------------------------------- */
 

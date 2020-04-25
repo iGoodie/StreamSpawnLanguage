@@ -22,7 +22,7 @@ public class TSLPlainToken extends TSLToken {
     }
 
     @Override
-    public String getValue(TSLContext context) {
+    public String calculateValue(TSLContext context) {
         return token;
     }
 

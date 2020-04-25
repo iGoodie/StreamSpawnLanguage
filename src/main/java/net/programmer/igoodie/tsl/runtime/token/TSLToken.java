@@ -10,7 +10,7 @@ public abstract class TSLToken {
 
     public abstract String getRaw();
 
-    public abstract String getValue(TSLContext context);
+    public abstract String calculateValue(TSLContext context);
 
     public boolean isPlain() {
         return this.getClass() == TSLPlainToken.class;

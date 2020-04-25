@@ -8,7 +8,7 @@ public class ExampleListener extends TSLListener {
 
     @Override
     public void onAction(TSLContext context, TSLActionNode action) {
-        System.out.println();
+        System.out.println(context.getActionArguments());
         context.getActionDefinition()
                 .perform(action.getTokens(), context);
     }

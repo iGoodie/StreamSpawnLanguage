@@ -183,7 +183,7 @@ public class TSLParser {
         }
 
         String eventName = eventTokens.stream()
-                .map(token -> token.getValue(validationContext))
+                .map(token -> token.calculateValue(validationContext))
                 .collect(Collectors.joining(" "));
 
         TSLEventDefinition eventDefinition = StreamSpawnLanguage.getEventDefinition(eventName);
@@ -207,7 +207,7 @@ public class TSLParser {
         eventDefinition.validateSyntax(eventTokens, validationContext);
 
         validationContext.setEventDefinition(eventDefinition);
-        validationContext.setEventArguments(eventDefinition.getSampleArguments());
+        validationContext.setEventArguments(eventDefinition.getShape());
         return new TSLEventNode(eventDefinition, eventTokens);
     }
 

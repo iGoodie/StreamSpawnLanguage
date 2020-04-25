@@ -28,6 +28,10 @@ public class TSLArguments {
 
     /* -------------------------------------- */
 
+    public Object get(String property) {
+        return data.get(property);
+    }
+
     public <T> T get(String property, Class<T> type, T defaultValue) {
         Object value = data.get(property);
 

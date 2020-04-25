@@ -30,7 +30,7 @@ public abstract class TSLActionDefinition extends TSLDefinition {
     }
 
     @Override
-    public TSLActionArguments getSampleArguments() {
+    public TSLActionArguments getShape() {
         return new TSLActionArguments(); // By default, no argument is serialized
     }
 

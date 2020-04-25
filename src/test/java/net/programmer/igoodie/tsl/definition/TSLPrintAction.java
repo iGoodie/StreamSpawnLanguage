@@ -28,7 +28,7 @@ public class TSLPrintAction extends TSLActionDefinition {
     @Override
     public boolean perform(List<TSLToken> tokens, TSLContext context) {
         String printThis = tokens.stream()
-                .map(token -> token.getValue(context))
+                .map(token -> token.calculateValue(context))
                 .collect(Collectors.joining(" "));
 
         System.out.println("ACTION PRINTS: " + printThis);

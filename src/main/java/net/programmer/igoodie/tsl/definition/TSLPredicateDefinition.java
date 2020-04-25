@@ -1,6 +1,6 @@
 package net.programmer.igoodie.tsl.definition;
 
-import net.programmer.igoodie.tsl.runtime.context.TSLArguments;
+import net.programmer.igoodie.tsl.runtime.context.TSLPredicateArguments;
 
 public abstract class TSLPredicateDefinition extends TSLDefinition {
 
@@ -11,8 +11,8 @@ public abstract class TSLPredicateDefinition extends TSLDefinition {
     /* ----------------------------------------- */
 
     @Override
-    public TSLArguments getSampleArguments() {
-        return new TSLArguments(); // By default, no argument is serialized
+    public TSLPredicateArguments getShape() {
+        return new TSLPredicateArguments(); // By default, no argument is serialized
     }
 
 }

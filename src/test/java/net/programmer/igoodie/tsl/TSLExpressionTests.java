@@ -5,7 +5,6 @@ import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
 import net.programmer.igoodie.tsl.lambda.TSLStringProvider;
 import net.programmer.igoodie.tsl.parser.TSLTokenizer;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
-import net.programmer.igoodie.tsl.runtime.context.TSLEventArguments;
 import net.programmer.igoodie.tsl.runtime.token.TSLExpression;
 import net.programmer.igoodie.tsl.runtime.context.TSLExpressionBindings;
 import net.programmer.igoodie.tsl.util.Resources;
@@ -36,7 +35,7 @@ public class TSLExpressionTests {
                 TSLExpression expression = (TSLExpression) token;
                 TSLExpression.updateBindings();
 
-                String evaluation = expression.getValue(testContext);
+                String evaluation = expression.calculateValue(testContext);
                 Assertions.assertEquals(evaluation, "Value#1 Value#2");
             }
         }

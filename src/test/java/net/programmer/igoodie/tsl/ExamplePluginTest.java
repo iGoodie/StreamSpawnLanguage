@@ -32,10 +32,13 @@ public class ExamplePluginTest {
         ruleset.subscribe(new ExampleListener());
 
         TSLEventArguments eventArguments = new TSLEventArguments()
+                .with("actor", "SomeTestGuys")
                 .with("numberArgument1", 1)
                 .with("numberArgument2", 2);
 
         ruleset.dispatch(StreamSpawnLanguage.getEventDefinition("Example Event"), eventArguments);
+//        ruleset.dispatch(StreamSpawnLanguage.getEventDefinition("Example Event"), eventArguments);
+//        ruleset.dispatch(StreamSpawnLanguage.getEventDefinition("Example Event"), eventArguments);
     }
 
 }

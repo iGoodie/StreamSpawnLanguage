@@ -12,7 +12,7 @@ public abstract class TSLEventDefinition extends TSLDefinition {
 
     public TSLEventDefinition(String name) {
         super(name);
-        this.acceptedProperties = Collections.unmodifiableSet(getSampleArguments().getMap().keySet());
+        this.acceptedProperties = Collections.unmodifiableSet(getShape().getMap().keySet());
     }
 
     public final boolean acceptsProperty(String property) {
@@ -36,7 +36,7 @@ public abstract class TSLEventDefinition extends TSLDefinition {
     }
 
     @Override
-    public abstract TSLEventArguments getSampleArguments();
+    public abstract TSLEventArguments getShape();
 
     @Override
     public String toString() {
