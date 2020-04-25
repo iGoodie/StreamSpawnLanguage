@@ -29,7 +29,7 @@ public class ExamplePrintAction extends TSLActionDefinition {
 
     @Override
     public boolean perform(List<TSLToken> tokens, TSLContext context) {
-        String printThis = tokens.subList(1, tokens.size() - 1).stream()
+        String printThis = tokens.subList(1, tokens.size()).stream()
                 .map(token -> token.calculateValue(context))
                 .collect(Collectors.joining(" "));
 

@@ -11,7 +11,7 @@ import java.util.List;
 public final class TSLActionNode extends TSLFlowNode {
 
     public TSLActionNode(TSLActionDefinition definition, List<TSLToken> tokens) {
-        super(definition, tokens);
+        super(definition, TSLLexer.actionPart(tokens));
     }
 
     @Override
