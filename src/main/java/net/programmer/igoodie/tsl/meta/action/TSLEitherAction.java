@@ -2,6 +2,7 @@ package net.programmer.igoodie.tsl.meta.action;
 
 import net.programmer.igoodie.tsl.definition.TSLActionDefinition;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+import net.programmer.igoodie.tsl.parser.TSLLexer;
 import net.programmer.igoodie.tsl.parser.TSLParser;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.node.TSLActionNode;
@@ -14,16 +15,16 @@ import java.util.List;
 public class TSLEitherAction extends TSLActionDefinition {
 
     public TSLEitherAction() {
-        super("EITHER");
+        super("EITHER", false);
     }
 
-    private TSLRandomizer<TSLActionNode> toRandomizer(List<TSLToken> actionArguments, TSLContext context) throws TSLSyntaxError {
-        TSLRandomizer<TSLActionNode> randomizer = new TSLRandomizer<>();
+    private TSLRandomizer<List<TSLToken>> toRandomizer(List<TSLToken> actionArguments, TSLContext context) throws TSLSyntaxError {
+        TSLRandomizer<List<TSLToken>> randomizer = new TSLRandomizer<>();
         List<List<TSLToken>> splittedParts = TSLHelpers.splitTokens(actionArguments, "OR");
         boolean chanceMode = false;
 
         for (List<TSLToken> actionTokens : splittedParts) {
-            TSLActionNode actionNode = null;
+            List<TSLToken> tokens = null;
             String percentageString = null;
 
             if (actionTokens.get(0).calculateValue(context).equalsIgnoreCase("CHANCE")) {
@@ -46,7 +47,7 @@ public class TSLEitherAction extends TSLActionDefinition {
                     );
                 }
 
-                actionNode = TSLParser.parseAction(actionTokens.subList(3, actionTokens.size()), context);
+                tokens = actionTokens.subList(3, actionTokens.size());
 
             } else if (chanceMode) {
                 throw new TSLSyntaxError(
@@ -55,16 +56,18 @@ public class TSLEitherAction extends TSLActionDefinition {
                 );
 
             } else {
-                actionNode = TSLParser.parseAction(actionTokens, context);
+                tokens = actionTokens;
             }
 
             if (percentageString == null) {
-                randomizer.addElement(actionNode, 100f / splittedParts.size());
+                randomizer.addElement(tokens, 100f / splittedParts.size());
 
             } else {
-                randomizer.addElement(actionNode, percentageString);
+                randomizer.addElement(tokens, percentageString);
             }
         }
+
+        System.out.println(randomizer.elements());
 
         int totalPercentage = randomizer.getTotalPercentage();
         if (chanceMode && totalPercentage != 100_00) {
@@ -79,8 +82,14 @@ public class TSLEitherAction extends TSLActionDefinition {
     public void validateSyntax(List<TSLToken> tokens, TSLContext context) throws TSLSyntaxError {
         List<TSLToken> actionArguments = tokens.subList(1, tokens.size());
 
-        for (TSLActionNode actionNode : toRandomizer(actionArguments, context).elements()) {
-            actionNode.getDefinition().validateSyntax(actionArguments, context);
+        for (List<TSLToken> actionTokens : toRandomizer(actionArguments, context).elements()) {
+            TSLActionNode actionNode = TSLParser.parseAction(actionTokens, context);
+
+            List<TSLToken> actionPart = actionNode.getDefinition().parsesNotification()
+                    ? TSLLexer.actionPart(actionTokens)
+                    : actionTokens;
+
+            actionNode.getDefinition().validateSyntax(actionPart, context);
         }
     }
 
@@ -89,9 +98,17 @@ public class TSLEitherAction extends TSLActionDefinition {
         List<TSLToken> actionArguments = tokens.subList(1, tokens.size());
 
         try {
-            TSLRandomizer<TSLActionNode> randomizer = toRandomizer(actionArguments, context);
-            TSLActionNode actionNode = randomizer.randomItem();
-            actionNode.getDefinition().perform(actionNode.getTokens(), context);
+            TSLRandomizer<List<TSLToken>> randomizer = toRandomizer(actionArguments, context);
+            List<TSLToken> randomActionTokens = randomizer.randomItem();
+
+            TSLActionNode actionNode = TSLParser.parseAction(randomActionTokens, context);
+
+            List<TSLToken> actionPart = actionNode.getDefinition().parsesNotification()
+                    ? TSLLexer.actionPart(randomActionTokens)
+                    : randomActionTokens;
+
+            actionNode.lexeNotification(context);
+            actionNode.getDefinition().perform(actionPart, context);
 
         } catch (TSLSyntaxError e) {
             // Should not happen, in theory

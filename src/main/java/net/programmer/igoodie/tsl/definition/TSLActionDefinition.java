@@ -8,8 +8,19 @@ import java.util.List;
 
 public abstract class TSLActionDefinition extends TSLDefinition {
 
+    private boolean parseNotification;
+
     public TSLActionDefinition(String name) {
+        this(name, true);
+    }
+
+    public TSLActionDefinition(String name, boolean parseNotification) {
         super(name);
+        this.parseNotification = parseNotification;
+    }
+
+    public boolean parsesNotification() {
+        return parseNotification;
     }
 
     /* ----------------------------------------- */

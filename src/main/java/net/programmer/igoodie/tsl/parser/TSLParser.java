@@ -285,7 +285,10 @@ public class TSLParser {
         }
 
         // Validate ignoring the DISPLAYING part
-        actionDefinition.validateSyntax(TSLLexer.actionPart(actionTokens), validationContext);
+        actionDefinition.validateSyntax(
+                actionDefinition.parsesNotification() ? TSLLexer.actionPart(actionTokens) : actionTokens,
+                validationContext
+        );
 
         return new TSLActionNode(actionDefinition, actionTokens);
     }

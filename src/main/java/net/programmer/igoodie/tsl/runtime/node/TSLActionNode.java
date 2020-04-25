@@ -11,7 +11,7 @@ import java.util.List;
 public final class TSLActionNode extends TSLFlowNode {
 
     public TSLActionNode(TSLActionDefinition definition, List<TSLToken> tokens) {
-        super(definition, TSLLexer.actionPart(tokens));
+        super(definition, tokens);
     }
 
     @Override
@@ -27,11 +27,7 @@ public final class TSLActionNode extends TSLFlowNode {
 
         context.setActionDefinition(getDefinition());
 
-        List<TSLToken> notificationPart = TSLLexer.notificationPart(tokens);
-        if (notificationPart != null) {
-            StreamSpawnLanguage.LOGGER.trace("Lexed notification -> %s", notificationPart);
-            context.getActionArguments().put("notification", notificationPart);
-        }
+        lexeNotification(context);
 
         List<TSLToken> actionPart = TSLLexer.actionPart(tokens);
         StreamSpawnLanguage.LOGGER.trace("Publishing action -> %s", actionPart);
@@ -44,4 +40,15 @@ public final class TSLActionNode extends TSLFlowNode {
     public String toString() {
         return getDefinition().getName();
     }
+
+    public void lexeNotification(TSLContext context) {
+        if (getDefinition().parsesNotification()) {
+            List<TSLToken> notificationPart = TSLLexer.notificationPart(tokens);
+            if (notificationPart != null) {
+                StreamSpawnLanguage.LOGGER.debug("Lexed notification -> %s", notificationPart);
+                context.getActionArguments().put("notification", notificationPart);
+            }
+        }
+    }
+
 }
