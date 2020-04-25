@@ -1,5 +1,7 @@
 package net.programmer.igoodie.tsl.meta.comparator;
 
+import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
+
 public abstract class TSLComparator {
 
     private String symbol;
@@ -12,7 +14,7 @@ public abstract class TSLComparator {
         return symbol;
     }
 
-    public abstract boolean compare(Object left, String right);
+    public abstract boolean compare(Object left, String right) throws TSLSyntaxError;
 
     /* ---------------------------------------------- */
 

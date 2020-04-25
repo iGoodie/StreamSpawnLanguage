@@ -4,8 +4,7 @@ import net.programmer.igoodie.tsl.definition.TSLEventDefinition;
 import net.programmer.igoodie.tsl.definition.TSLPredicateDefinition;
 import net.programmer.igoodie.tsl.exception.TSLPluginError;
 import net.programmer.igoodie.tsl.exception.TSLSyntaxError;
-import net.programmer.igoodie.tsl.meta.comparator.TSLComparator;
-import net.programmer.igoodie.tsl.meta.comparator.TSLComparatorEquals;
+import net.programmer.igoodie.tsl.meta.comparator.*;
 import net.programmer.igoodie.tsl.runtime.context.TSLArguments;
 import net.programmer.igoodie.tsl.runtime.context.TSLContext;
 import net.programmer.igoodie.tsl.runtime.token.TSLToken;
@@ -83,6 +82,12 @@ public class TSLWithPredicate extends TSLPredicateDefinition {
                     TSLSyntaxError.causedNear(predicateArguments)
             );
         }
+
+        // Compare once to make sure nothing is wrong
+        String propertyName = predicateArguments.get(0).calculateValue(context);
+        Object left = context.getEventArguments().get(propertyName);
+        String right = predicateArguments.get(predicateArguments.size() - 1).calculateValue(context);
+        comparator.compare(left, right);
     }
 
     @Override
@@ -101,9 +106,14 @@ public class TSLWithPredicate extends TSLPredicateDefinition {
         boolean negated = isNegated(predicateArguments.subList(1, predicateArguments.size() - 1));
         TSLComparator comparator = COMPARATOR_MAP.get(getComparatorSymbol(predicateArguments, context).toUpperCase());
 
-        boolean comparison = comparator.compare(left, right);
+        try {
+            boolean comparison = comparator.compare(left, right);
+            return negated ? !comparison : comparison;
 
-        return negated ? !comparison : comparison;
+        } catch (TSLSyntaxError e) {
+            // Should not happen in theory...
+            throw new InternalError("Comparison error while comparing", e);
+        }
     }
 
     /* --------------------------------------------------- */
@@ -121,6 +131,13 @@ public class TSLWithPredicate extends TSLPredicateDefinition {
     static {
         try {
             registerComparator(new TSLComparatorEquals());
+            registerComparator(new TSLComparatorGreaterThan());
+            registerComparator(new TSLComparatorGreaterThanOrEqual());
+            registerComparator(new TSLComparatorLessThan());
+            registerComparator(new TSLComparatorLessThanOrEqual());
+            registerComparator(new TSLComparatorInRange());
+            registerComparator(new TSLComparatorPrefix());
+            registerComparator(new TSLComparatorPostfix());
 
         } catch (TSLPluginError e) {
             // Should never happen in theory...

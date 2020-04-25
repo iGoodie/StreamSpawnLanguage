@@ -14,4 +14,5 @@ PRINT
  DISPLAYING %[1,2,${actor}]%
  ON Example Event
  WITH ${numberArgument1 == 1}
+ WITH numberArgument1 IN RANGE [-10,100]
  WITH actor NOT = iGoodie
